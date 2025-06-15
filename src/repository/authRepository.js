@@ -1,5 +1,4 @@
 import { User } from "../schema/userSchema.js";
-import bcrypt from "bcrypt";
 
 export const initiateSignup = async({ email, userName }) => {
 

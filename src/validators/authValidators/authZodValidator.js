@@ -17,7 +17,7 @@ export const authValidator = (schema) => {
             res.status(400).json({
                 message: 'Validation failed',
                 success: false,
-                error: error.error
+                error: error.issues[0]
             });
         }
 

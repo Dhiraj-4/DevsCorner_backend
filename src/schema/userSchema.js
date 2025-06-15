@@ -35,15 +35,19 @@ const userSchema = new mongoose.Schema(
     },
 
     passwordResetToken: {
-      code: String, // hashed
-      expiresAt: Date,
+      type: {
+        code: String,      // hashed
+        expiresAt: Date,
+      },
       select: false,
       default: {}
     },
 
     otp: {
-      code: String, // hashed
-      expiresAt: Date,
+      type: {
+        code: String,      // hashed
+        expiresAt: Date,
+      },
       select: false,
       default: {}
     },
@@ -100,10 +104,7 @@ const userSchema = new mongoose.Schema(
     countFollowing: { type: Number, default: 0 },
 
     companyName: {
-      type: String,
-      required: function () {
-        return this.role === "employer";
-      },
+      type: String
     },
 
     isDeleted: {
