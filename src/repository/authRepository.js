@@ -13,7 +13,7 @@ export const initiateSignup = async({ email, userName }) => {
         } 
 }
 
-export const verifySignup = async({ email, userName, fullName, password, role }) => {
+export const verifySignup = async({ email, userName, fullName, password }) => {
 
     const existingUser = await User.findOne({ $or: [{ email }, { userName }] });
         if(existingUser) {
@@ -25,7 +25,7 @@ export const verifySignup = async({ email, userName, fullName, password, role })
             }
         }
 
-    await User.create({ email, userName, fullName, password, role });
+    await User.create({ email, userName, fullName, password });
    
     return;
 }

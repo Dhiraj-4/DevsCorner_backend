@@ -11,7 +11,7 @@ import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import { transporter } from '../config/nodemailerConfig.js'
 
-export const initiateSignup = async({ email, password, fullName, role, userName }) => {
+export const initiateSignup = async({ email, password, fullName, userName }) => {
 
     await initiateSignupRepository({ email , userName });
     
@@ -47,7 +47,6 @@ export const initiateSignup = async({ email, password, fullName, role, userName 
         password: hashPassword,
         fullName,
         userName,
-        role,
         otp
     }
     const otpVerificationToken = jwt.sign(
@@ -58,14 +57,14 @@ export const initiateSignup = async({ email, password, fullName, role, userName 
     return otpVerificationToken;
 }
 
-export const verifySignup = async({ email, userName, password, role, fullName, enteredOtp, otp }) => {
+export const verifySignup = async({ email, userName, password, fullName, enteredOtp, otp }) => {
     if(enteredOtp !== otp) {
         throw {
             message: 'Invalid Otp',
             status: 400
         }
     }
-    await verifySignupRepository({ email, userName, password, role, fullName });
+    await verifySignupRepository({ email, userName, password, fullName });
     return;
 }
 
@@ -130,7 +129,7 @@ export const forgotPassword = async({ identifier }) => {
 
     user.otp = {
         code: hashOtp,
-        expiresAt: Date.now() + 10 * 60 * 1000
+        expiresAt: Date.now() + 2 * 60 * 1000
     }
 
     await user.save();
@@ -138,7 +137,7 @@ export const forgotPassword = async({ identifier }) => {
     const otpVerificationToken = jwt.sign(
     { userName: user.userName },
     OTP_SECRET_KEY,
-    { expiresIn: "10m" }
+    { expiresIn: "2m" }
     );
 
     return { otpVerificationToken };
@@ -163,13 +162,13 @@ export const resetPassword = async({ otp, userName }) => {
     const passwordResetToken = jwt.sign(
         { userName: userName },
         PASSWORD_SECRET_KEY,
-        { expiresIn: "10m" }
+        { expiresIn: "2m" }
     );
     const hashPasswordResetToken = crypto.createHash("sha256").update(passwordResetToken).digest("hex");
 
     user.passwordResetToken = {
         code: hashPasswordResetToken,
-        expiresAt: Date.now() + 10 * 60 * 1000
+        expiresAt: Date.now() + 2 * 60 * 1000
     }
 
     await user.save();
@@ -177,28 +176,18 @@ export const resetPassword = async({ otp, userName }) => {
     return passwordResetToken;
 }
 
-export const updatePassword = async ({ passwordResetToken, password }) => {
-  // ✅ Step 1: Verify the JWT
-  let decoded;
-  try {
-    decoded = jwt.verify(passwordResetToken, PASSWORD_SECRET_KEY);
-  } catch (err) {
-    throw {
-      message: "Invalid or expired password reset token",
-      status: 403
-    };
-  }
+export const updatePassword = async ({ passwordResetToken, userName, password }) => {
 
-  // ✅ Step 2: Find user
-  const user = await findUser({ identifier: decoded.userName });
-  if (!user || !user.passwordResetToken) {
+  // ✅ Step 1: Find user
+  const user = await findUser({ identifier: userName });
+  if (!user || !user.passwordResetToken.code) {
     throw {
       message: "User or reset token not found",
       status: 404
     };
   }
 
-  // ✅ Step 3: Compare hashed token
+  // ✅ Step 2: Compare hashed token
   const hashedToken = crypto.createHash("sha256").update(passwordResetToken).digest("hex");
   const isMatch = hashedToken === user.passwordResetToken.code;
   const notExpired = user.passwordResetToken.expiresAt > Date.now();
@@ -207,13 +196,14 @@ export const updatePassword = async ({ passwordResetToken, password }) => {
     throw { message: "Invalid or expired reset token", status: 403 };
   }
 
-  // ✅ Step 4: Hash and update password
+  // ✅ Step 3: Hash and update password
   const hashedPassword = await bcrypt.hash(password, 12);
   user.password = hashedPassword;
 
-  // ✅ Step 5: Invalidate token
-  user.passwordResetToken = undefined;
+  // ✅ Step 4: Invalidate token
+  user.passwordResetToken = {};
 
+  // ✅ Step 5: save changes in DB
   await user.save();
 
   return;

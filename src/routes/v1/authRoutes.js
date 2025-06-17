@@ -8,6 +8,8 @@ import { renewAccessToken } from '../../controller/refreshTokenController.js';
 import { refreshTokenValidator } from '../../validators/authValidators/refreshTokenValidator.js';
 import { accessTokenValidator } from '../../validators/authValidators/accessTokenValidator.js';
 import { forgotPasswdSchema } from '../../validators/authValidators/forgotPasswdZodSchema.js';
+import { passwordResetTokenValidator } from '../../validators/authValidators/passwordResetTokenValidator.js';
+import { updatePasswordSchema } from '../../validators/authValidators/passwordSchema.js';
 
 const router = express.Router();
 
@@ -18,11 +20,14 @@ router.post('/login', authValidator(loginSchema), login);
 
 router.post('/logout', accessTokenValidator, logout);
 
+//returns otpVerificationTokn and sends otp
 router.post('/forgot-password', authValidator(forgotPasswdSchema) ,forgotPassword);
 
-router.post("/reset-password", optTokenValidator, resetPassword);
+//verifies otp and otpVerificationTokn and returns passwordResetToken
+router.post("/reset-password/initiate", optTokenValidator, resetPassword);
 
-router.post("/update-password", updatePassword);
+//verifies passwordResetToken and resets password
+router.post("/update-password", passwordResetTokenValidator, authValidator(updatePasswordSchema), updatePassword);
 
 router.post('/refresh', refreshTokenValidator, renewAccessToken);
 

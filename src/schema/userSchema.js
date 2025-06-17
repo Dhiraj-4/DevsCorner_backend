@@ -15,8 +15,7 @@ const userSchema = new mongoose.Schema(
       trim: true,
       minlength: 3,
       maxlength: 30,
-      match: [/^[a-zA-Z0-9_]+$/, "User Name can only contain letters, numbers, and underscores"],
-      lowercase: true
+      match: [/^[a-zA-Z0-9_]+$/, "User Name can only contain letters, numbers, and underscores"]
     },
 
     email: {
@@ -50,12 +49,6 @@ const userSchema = new mongoose.Schema(
       },
       select: false,
       default: {}
-    },
-
-    role: {
-      type: String,
-      enum: ["developer", "employer", "both"],
-      required: true,
     },
 
     profileImage: {

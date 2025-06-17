@@ -13,13 +13,12 @@ export const initiateSignup = async(req, res) => {
         const otpVerificationToken = await initiateSignupService({
             email: req.body.email,
             password: req.body.password,
-            role: req.body.role,
             fullName: req.body.fullName,
             userName: req.body.userName
         });
 
         return successResponse({
-            message: "Otp send",
+            message: "OTP sent to your email.",
             res: res,
             status: 200,
             info: otpVerificationToken
@@ -35,7 +34,6 @@ export const verifySignup = async(req, res) => {
             email: req.user.email,
             userName: req.user.userName,
             fullName: req.user.fullName,
-            role: req.user.role,
             password: req.user.password,
             otp: req.user.otp,
             enteredOtp: req.body.otp
@@ -96,7 +94,7 @@ export const logout = async(req, res) => {
 // returns otpVerificationToken and send otp to the users email
 export const forgotPassword = async(req, res) => {
     try {
-        const otpVerificationToken = await forgotPasswordService({
+        const { otpVerificationToken } = await forgotPasswordService({
             identifier: req.body.identifier
         });
 
@@ -130,20 +128,10 @@ export const resetPassword = async(req, res) => {
 }
 
 export const updatePassword = async(req, res) => {
-
-    const authHeader = req.headers['authorization'];
-    
-    if(!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.status(401).json({
-            message: 'Access token missing or malformed',
-            success: false
-        });
-    }
-    const accessToken = authHeader.split(' ')[1];
-
     try {
         await updatePasswordService({
-            passwordResetToken: accessToken,
+            passwordResetToken: req.user.passwordResetToken,
+            userName: req.user.userName,
             password: req.body.password
         });
 
@@ -151,7 +139,7 @@ export const updatePassword = async(req, res) => {
             message: "password updated",
             status: 200,
             res: res
-        })
+        });
     } catch (error) {
         return errorResponse({ error, res });
     }

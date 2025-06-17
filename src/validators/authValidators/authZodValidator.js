@@ -5,7 +5,6 @@ export const authValidator = (schema) => {
             userName: req.body.userName,
             password: req.body.password,
             fullName: req.body.fullName,
-            role: req.body.role,
             identifier: req.body.identifier
         }
         try {

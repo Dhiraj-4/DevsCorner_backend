@@ -1,7 +1,6 @@
 import { z } from "zod";
 
-const strongPasswordRegex =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&*!])[A-Za-z\d@#$%^&*!]{8,}$/;
+const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&*!])[A-Za-z\d@#$%^&*!]{8,}$/;
 
 export const signupSchema = z.object({
   userName: z
@@ -13,7 +12,6 @@ export const signupSchema = z.object({
     }),
   email: z.string().email(),
   fullName: z.string().min(3).max(30),
-  role: z.enum(["developer", "employer", "both"]),
   password: z
     .string()
     .regex(
