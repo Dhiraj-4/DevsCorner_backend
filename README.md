@@ -251,6 +251,34 @@ Each route summary includes:
 * Secure cookie usage for refresh tokens
 
 ---
+## ⚙️ Environment Variables (`.env`)
+
+Vist: https://github.com/Dhiraj-4/DevsCorner_frontend to clone the frontend,
+
+will make the frontend live when the project once its stabilizes.
+
+---
+
+## 🚀 Getting Started
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/Dhiraj-4/DevsCorner_backend
+cd DevsCorner_backend
+```
+
+### 2. Install dependencies
+
+```bash
+npm install
+# or
+yarn install
+```
+
+### 3. Configure environment
+
+---
 
 ## ⚙️ .env Configuration
 
@@ -272,5 +300,47 @@ AWS_SECRET_KEY=
 AWS_REGION=
 AWS_BUCKET_NAME=
 ```
+---
+
+### 4. Start development server
+
+```bash
+npm start
+# or
+yarn start
+```
 
 ---
+
+## 📡 API Integration
+
+* All auth-related routes (signup, login, password reset) are fully connected to DevsCorner’s frontend UI.
+* Uses secure token-based password reset system.
+* Axios and cors is used for API communication.
+
+---
+
+## 📌 Next Goals
+
+* 💬 Real-time Chat with WebSocket
+* 📹 Video Calling with WebRTC
+* 📄 Resume Upload Features
+
+---
+
+## 🤝 Contributing
+
+Feel free to fork the repo and submit PRs once the project stabilizes.
+
+---
+
+## 📄 License
+
+I don't know by me i guess
+---
+
+## 👤 Author
+
+Made by [Dhiraj Londhe](https://github.com/Dhiraj-4)
+
+```
