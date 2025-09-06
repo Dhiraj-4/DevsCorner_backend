@@ -11,7 +11,6 @@ export const getMe = async(req, res) => {
         const user = await getMeService({
             userName: req.user.userName
         });
-
         return successResponse({
             message: 'fetched user',
             status: 200,

@@ -78,8 +78,10 @@ export const login = async({ identifier, password }) => {
 
     if(!isMatch) throw { message: "Invalid password.", status: 401 }
 
+    delete user.password;
+    
     const payload = {
-        userName: user.userName,
+        user
     }
     const accessToken = jwt.sign(payload, ACCESS_SECRET_KEY, { expiresIn: '15m' });
 

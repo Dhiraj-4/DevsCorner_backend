@@ -3,7 +3,6 @@ import { REFRESH_SECRET_KEY } from "../../config/serverConfig.js";
 
 export const refreshTokenValidator = (req, res, next) => {
 
-    console.log("This is req.cookies.refreshToken: ", req.cookies.refreshToken);
     const refreshToken = req.cookies?.refreshToken;
 
     if (!refreshToken) {

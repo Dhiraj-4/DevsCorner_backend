@@ -2,7 +2,6 @@ import { User } from '../schema/userSchema.js';
 
 export const getMe = async({ userName }) => {
     const user = await User.findOne({ userName });
-    console.log(user);
     return user;
 }
 

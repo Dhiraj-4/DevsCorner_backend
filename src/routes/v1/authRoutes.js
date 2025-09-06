@@ -6,7 +6,6 @@ import { optTokenValidator } from '../../validators/authValidators/otpTokenValid
 import { loginSchema } from '../../validators/authValidators/loginZodSchema.js';
 import { renewAccessToken } from '../../controller/refreshTokenController.js';
 import { refreshTokenValidator } from '../../validators/authValidators/refreshTokenValidator.js';
-import { accessTokenValidator } from '../../validators/authValidators/accessTokenValidator.js';
 import { forgotPasswdSchema } from '../../validators/authValidators/forgotPasswdZodSchema.js';
 import { passwordResetTokenValidator } from '../../validators/authValidators/passwordResetTokenValidator.js';
 import { updatePasswordSchema } from '../../validators/authValidators/passwordSchema.js';
@@ -18,7 +17,7 @@ router.post('/signup/verify', optTokenValidator, verifySignup);
 
 router.post('/login', authValidator(loginSchema), login);
 
-router.post('/logout', accessTokenValidator, logout);
+router.post('/logout', refreshTokenValidator, logout);
 
 //returns otpVerificationTokn and sends otp
 router.post('/forgot-password', authValidator(forgotPasswdSchema) ,forgotPassword);
