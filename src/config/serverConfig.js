@@ -5,6 +5,10 @@ dotenv.config();
 
 export const PORT = process.env.PORT || 8080;
 
+export const FRONTEND_URL = process.env.NODE_ENV === 'production'
+  ? 'https://devs-corner-frontend-raxnplvpy-dhriaj-londhes-projects.vercel.app/'
+  : 'http://localhost:5173';
+
 export const SMTP_USER = process.env.SMTP_USER;
 
 export const SMTP_PASS = process.env.SMTP_PASS;

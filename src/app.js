@@ -1,7 +1,7 @@
 import express from 'express';
 import morgan from 'morgan';
 import apiRouter from './routes/apiRoutes.js';
-import { connectDb, PORT } from './config/serverConfig.js';
+import { connectDb, FRONTEND_URL, PORT } from './config/serverConfig.js';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 
@@ -11,7 +11,7 @@ app.use(cookieParser());
 
 // Allow frontend origin + credentials
 app.use(cors({
-  origin: 'http://localhost:5173',  // frontend origin
+  origin: FRONTEND_URL,  // frontend origin
   credentials: true,                // allow cookies
 }));
 
