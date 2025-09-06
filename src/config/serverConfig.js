@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 
 dotenv.config();
 
-export const PORT = process.env.PORT;
+export const PORT = process.env.PORT || 8080;
 
 export const SMTP_USER = process.env.SMTP_USER;
 
