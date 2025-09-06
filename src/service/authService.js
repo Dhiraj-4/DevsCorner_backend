@@ -33,7 +33,7 @@ export const initiateSignup = async({ email, password, fullName, userName }) => 
             <div style="font-size: 24px; font-weight: bold; color: #f0f6fc; background: #161b22; padding: 12px 20px; border: 1px solid #30363d; border-radius: 6px; width: fit-content;">
               ${otp}
             </div>
-            <p style="margin-top: 20px;">This OTP is valid for <strong>5 minutes</strong>. Do not share it with anyone.</p>
+            <p style="margin-top: 20px;">This OTP is valid for <strong>2 minutes</strong>. Do not share it with anyone.</p>
             <hr style="margin: 30px 0; border: none; border-top: 1px solid #30363d;" />
             <p style="font-size: 14px; color: #8b949e;">If you didn't request this, please ignore this email.</p>
             <p style="font-size: 12px; color: #6e7681;">DevsCorner • Built for developers, by developers</p>
@@ -115,7 +115,7 @@ export const forgotPassword = async({ identifier }) => {
             <div style="font-size: 24px; font-weight: bold; color: #f0f6fc; background: #161b22; padding: 12px 20px; border: 1px solid #30363d; border-radius: 6px; width: fit-content;">
               ${otp}
             </div>
-            <p style="margin-top: 20px;">This OTP is valid for <strong>5 minutes</strong>. Do not share it with anyone.</p>
+            <p style="margin-top: 20px;">This OTP is valid for <strong>2 minutes</strong>. Do not share it with anyone.</p>
             <hr style="margin: 30px 0; border: none; border-top: 1px solid #30363d;" />
             <p style="font-size: 14px; color: #8b949e;">If you didn't request this, please ignore this email.</p>
             <p style="font-size: 12px; color: #6e7681;">DevsCorner • Built for developers, by developers</p>
