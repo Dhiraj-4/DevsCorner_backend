@@ -77,11 +77,9 @@ export const login = async({ identifier, password }) => {
     const isMatch = await bcrypt.compare(password, user.password);
 
     if(!isMatch) throw { message: "Invalid password.", status: 401 }
-
-    delete user.password;
     
     const payload = {
-        user
+        userName: user.userName
     }
     const accessToken = jwt.sign(payload, ACCESS_SECRET_KEY, { expiresIn: '15m' });
 

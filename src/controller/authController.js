@@ -60,8 +60,9 @@ export const login = async(req, res) => {
         res.status(200).cookie("refreshToken", response.refreshToken, {
         httpOnly: true,
         secure: true,
-        sameSite: "Strict",
+        sameSite: "None",
         maxAge: 1 * 24 * 60 * 60 * 1000,
+        path: "/"
         }).json({
         message: 'Login Successful',
         success: true,
@@ -77,7 +78,7 @@ export const logout = async(req, res) => {
         res.clearCookie("refreshToken", {
           httpOnly: true,
           secure: true,
-          sameSite: "Strict",
+          sameSite: "None",
           path: "/",
         });
 
