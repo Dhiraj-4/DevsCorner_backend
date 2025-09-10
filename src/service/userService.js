@@ -20,7 +20,7 @@ export const getMe = async({ userName }) => {
     return user;
 }
 
-export const updateProfileHandler = async ({ userName, fullName, bio, role, socials, location, website }) => {
+export const updateProfileHandler = async ({ userName, fullName, resume, bio, skills, socials, location }) => {
 
   //created an update object and will store the fields which are not undefined or ""
   const update = {};
@@ -28,12 +28,12 @@ export const updateProfileHandler = async ({ userName, fullName, bio, role, soci
   // check the fields which are not undefined or empty string
   if (userName) update.userName = userName;
   if (fullName) update.fullName = fullName;
+  if (resume) update.resume = resume;
   if (bio) update.bio = leoProfanity.clean(bio);
-  if (role) update.role = role;
+  if (skills) update.skills = skills;
 
   //check if the location is valid and if the website url is reachable
   if (location && await isValidLocation(location)) update.location = location;
-  if (website && await isUrlReachable(website)) update.website = website;
 
   // check if the socials links are available and are they reachable  
   if (socials) {

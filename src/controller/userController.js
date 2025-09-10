@@ -27,9 +27,11 @@ export const updateProfileHandler = async(req, res) => {
         const user = await updateProfileHandlerService({
             fullName: req.body.fullName,
             bio: req.body.bio,
-            socials: req.body.socials,
+            skills: req.body.skills,
             location: req.body.location,
-            userName: req.user.userName
+            resume: req.body.resume,
+            socials: req.body.socials,
+            userName: req.user.userName,
         });
 
         return successResponse({

@@ -2,11 +2,12 @@ export const userValidator = (schema) => {
     return (req, res, next) => {
         const object = {
             fullName: req.body.fullName,
+            email: req.body.email,
             bio: req.body.bio,
-            role: req.body.role,
-            socials: req.body.socials,
+            resume: req.body.resume,
+            skills: req.body.skills,
             location: req.body.location,
-            website: req.body.website
+            socials: req.body.socials,
         }
         try {
             schema.parse(object);

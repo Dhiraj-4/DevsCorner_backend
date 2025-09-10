@@ -58,19 +58,16 @@ const userSchema = new mongoose.Schema(
 
     bio: {
       type: String,
-      maxlength: 300,
+      maxlength: 3000,
     },
 
     location: { type: String },
-
-    website: { type: String },
 
     skills: [String],
 
     socialLinks: {
       github: String,
       linkedin: String,
-      portfolio: String,
       twitter: String,
     },
 
@@ -95,10 +92,6 @@ const userSchema = new mongoose.Schema(
     countFollowers: { type: Number, default: 0 },
 
     countFollowing: { type: Number, default: 0 },
-
-    companyName: {
-      type: String
-    },
 
     isDeleted: {
       type: Boolean,
