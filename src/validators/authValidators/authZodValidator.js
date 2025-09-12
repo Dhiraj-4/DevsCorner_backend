@@ -1,22 +1,22 @@
 export const authValidator = (schema) => {
     return (req, res, next) => {
         const object = {
-            email: req.body.email,
-            userName: req.body.userName,
-            password: req.body.password,
-            fullName: req.body.fullName,
-            identifier: req.body.identifier
+            email: req.body?.email,
+            userName: req.body?.userName,
+            password: req.body?.password,
+            fullName: req.body?.fullName,
+            identifier: req.body?.identifier
         }
         try {
             schema.parse(object);
             console.log("✅ Validation passed");
             next();
         } catch (error) {
-            console.log("❌ Validation failed:", error.errors);
+            console.log("❌ Validation failed:", error);
             res.status(400).json({
                 message: 'Validation failed',
                 success: false,
-                error: error.issues[0]
+                error: error
             });
         }
 

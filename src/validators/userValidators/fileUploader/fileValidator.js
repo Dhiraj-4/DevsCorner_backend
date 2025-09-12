@@ -1,13 +1,8 @@
-export const userValidator = (schema) => {
+export const fileValidator = (schema) => {
     return (req, res, next) => {
         const object = {
-            fullName: req.body?.fullName,
-            email: req.body?.email,
-            bio: req.body?.bio,
-            resume: req.body?.resume,
-            skills: req.body?.skills,
-            location: req.body?.location,
-            socials: req.body?.socials,
+            fileName: req.body?.fileName,
+            fileType: req.body?.fileType
         }
         try {
             schema.parse(object);
@@ -21,6 +16,5 @@ export const userValidator = (schema) => {
                 error: error
             });
         }
-
-    }
+}
 }

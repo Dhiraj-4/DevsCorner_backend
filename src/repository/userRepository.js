@@ -38,7 +38,7 @@ export const uploadProfileImage = async({ fileUrl, userName }) => {
 
   if(!user) throw { message: 'User not found', status: 404 }
 
-  const updatedUser = await findByIdAndUpdate(user._id, { profileImage: fileUrl }, { new: true });
+  const updatedUser = await User.findByIdAndUpdate(user._id, { profileImage: fileUrl }, { new: true });
 
   return updatedUser;
 }

@@ -49,7 +49,8 @@ export const generateUploadUrl = async(req, res) => {
     try {
         const { uploadUrl, fileUrl } = await generateUploadUrlService({
             fileName: req.body.fileName,
-            fileType: req.body.fileType
+            fileType: req.body.fileType,
+            userName: req.user.userName
         });
 
         return successResponse({

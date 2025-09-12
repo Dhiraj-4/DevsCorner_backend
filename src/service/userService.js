@@ -57,21 +57,44 @@ export const updateProfileHandler = async ({ userName, fullName, resume, bio, sk
   return user;
 };
 
-export const generateUploadUrl = async({ fileName, fileType }) => {
+export const generateUploadUrl = async ({ fileName, fileType, userName }) => {
+  const user = await getMeRepository({ userName });
+
+  // 1. Delete old image if it exists
+  if (user.profileImage) {
+    try {
+      const oldKey = user.profileImage.replace(
+        `https://${AWS_BUCKET_NAME}.s3.${AWS_REGION}.amazonaws.com/`,
+        ""
+      );
+
+      await s3.deleteObject({
+        Bucket: AWS_BUCKET_NAME,
+        Key: oldKey,
+      }).promise();
+
+      console.log(`🗑 Deleted old profile image: ${oldKey}`);
+    } catch (err) {
+      console.error("Failed to delete old profile image:", err);
+    }
+  }
+
+  // 2. Create a new pre-signed upload URL
+  const key = `profile-images/${Date.now()}-${fileName}`;
 
   const s3Params = {
     Bucket: AWS_BUCKET_NAME,
-    Key: `profile-images/${fileName}`,
+    Key: key,
     Expires: 60, // valid for 60 seconds
     ContentType: fileType,
-    ACL: "public-read",
   };
 
   const uploadUrl = await s3.getSignedUrlPromise("putObject", s3Params);
-  const fileUrl = `https://${AWS_BUCKET_NAME}.s3.${AWS_REGION}.amazonaws.com/profile-images/${fileName}`;
+  const fileUrl = `https://${AWS_BUCKET_NAME}.s3.${AWS_REGION}.amazonaws.com/${key}`;
 
+  // 3. Return like before
   return { uploadUrl, fileUrl };
-}
+};
 
 export const uploadProfileImage = async({ fileUrl, userName }) => {
 
