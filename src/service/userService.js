@@ -1,7 +1,10 @@
 import {
     getMe as getMeRepository,
     updateProfileHandler as updateProfileHandlerRepository,
-    uploadProfileImage as uploadProfileImageRepository
+    uploadProfileImage as uploadProfileImageRepository,
+    uploadResume as uploadResumeRepository,
+    deleteResume as deleteResumeRepository,
+    deleteProfileImage as deleteProfileImageRepository
 } from '../repository/userRepository.js';
 import leoProfanity from 'leo-profanity';
 import { isUrlReachable } from '../utils/isUrlReachable.js';
@@ -80,7 +83,8 @@ export const generateUploadUrl = async ({ fileName, fileType, userName }) => {
   }
 
   // 2. Create a new pre-signed upload URL
-  const key = `profile-images/${Date.now()}-${fileName}`;
+  const key = `profile-images/${userName}-${Date.now()}-${fileName}`;
+
 
   const s3Params = {
     Bucket: AWS_BUCKET_NAME,
@@ -107,4 +111,110 @@ export const uploadProfileImage = async({ fileUrl, userName }) => {
       status: 400
     }
   }
+}
+
+export const generateResumeUploadUrl = async({ fileName, fileType, userName }) => {
+ const user = await getMeRepository({ userName });
+
+ 
+  // 1. Create a new pre-signed upload URL
+  const key = `resume/${userName}-${Date.now()}-${fileName}`;
+
+  const s3Params = {
+    Bucket: AWS_BUCKET_NAME,
+    Key: key,
+    Expires: 60, // valid for 60 seconds
+    ContentType: fileType
+  };
+
+  const uploadUrl = await s3.getSignedUrlPromise("putObject", s3Params);
+  const fileUrl = `https://${AWS_BUCKET_NAME}.s3.${AWS_REGION}.amazonaws.com/${key}`;
+
+  // 2. Return
+  return { uploadUrl, fileUrl };
+};
+
+export const uploadResume = async({ fileUrl, userName }) => {
+
+  if(fileUrl) {
+    const user = await uploadResumeRepository({ fileUrl, userName });
+    return user;
+  } else {
+    throw {
+      message: 'fileUrl missing',
+      status: 400
+    }
+  }
+}
+
+export const deleteResume = async({ userName }) => {
+  const user = await getMeRepository({ userName });
+
+  // 1. Delete old resume if it exists
+  if (user.resume) {
+    try {
+      const oldKey = user.resume.replace(
+        `https://${AWS_BUCKET_NAME}.s3.${AWS_REGION}.amazonaws.com/`,
+        ""
+      );
+
+      await s3.deleteObject({
+        Bucket: AWS_BUCKET_NAME,
+        Key: oldKey,
+      }).promise();
+
+      console.log(`🗑 Deleted old resume: ${oldKey}`);
+    } catch (err) {
+      console.error("Failed to delete old resume:", err);
+    }
+  }
+
+  const updatedUser = await deleteResumeRepository({ userName });
+
+  return updatedUser;
+}
+
+export const getResumeDownloadUrl = async ({ userName }) => {
+  const user = await getMeRepository({ userName });
+
+  if (!user?.resume) throw { message: "Resume not found", status: 404 };
+
+  const key = user.resume.replace(
+    `https://${AWS_BUCKET_NAME}.s3.${AWS_REGION}.amazonaws.com/`,
+    ""
+  );
+
+  const downloadUrl = s3.getSignedUrl("getObject", {
+    Bucket: AWS_BUCKET_NAME,
+    Key: key,
+    Expires: 300, // 5 minutes
+  });
+
+  return downloadUrl;
+};
+
+export const deleteProfileImage = async({ userName }) => {
+  const user = await getMeRepository({ userName });
+
+  // 1. Delete old image if it exists
+  if (user.profileImage) {
+    try {
+      const oldKey = user.profileImage.replace(
+        `https://${AWS_BUCKET_NAME}.s3.${AWS_REGION}.amazonaws.com/`,
+        ""
+      );
+
+      await s3.deleteObject({
+        Bucket: AWS_BUCKET_NAME,
+        Key: oldKey,
+      }).promise();
+
+      console.log(`🗑 Deleted old profile image: ${oldKey}`);
+    } catch (err) {
+      console.error("Failed to delete old profile image:", err);
+    }
+  }
+
+  await deleteProfileImageRepository({ userName });
+
 }

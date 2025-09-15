@@ -42,3 +42,39 @@ export const uploadProfileImage = async({ fileUrl, userName }) => {
 
   return updatedUser;
 }
+
+export const uploadResume = async({ fileUrl, userName }) => {
+  const user = await User.findOne({ userName });
+
+  if(!user) throw { message: "User not found", status: 404 };
+
+  const updatedUser = await User.findByIdAndUpdate(user._id, { resume: fileUrl }, { new: true });
+
+  return updatedUser;
+}
+
+export const deleteResume = async ({ userName }) => {
+  const user = await User.findOne({ userName });
+
+  if (!user) throw { message: "User not found", status: 404 };
+
+  // Update resume to "" in DB
+  const updatedUser = await User.findByIdAndUpdate(
+    user._id,
+    { resume: "" },
+    { new: true }
+  );
+
+  return updatedUser;
+};
+
+export const deleteProfileImage = async({ userName }) => {
+  const user = await User.findOne({ userName });
+
+  await User.findByIdAndUpdate(
+    user._id,
+    { profileImage: "" },
+    { new: true }
+  );
+
+}
