@@ -7,7 +7,13 @@ import {
     uploadResume as uploadResumeService,
     deleteResume as deleteResumeService,
     getResumeDownloadUrl as getResumeDownloadUrlService,
-    deleteProfileImage as deleteProfileImageService
+    deleteProfileImage as deleteProfileImageService,
+    uploadSocialLinks as uploadSocialLinksService,
+    deleteSocialLinks as deleteSocialLinksService,
+    uploadSkills as uploadSkillsService,
+    deleteSkill as deleteSkillService,
+    uploadLocation as uploadLocationService,
+    deleteLocation as deleteLocationService
 } from '../service/userService.js'
 import { errorResponse, successResponse } from "../utils/responseHelper.js";
 
@@ -166,6 +172,117 @@ export const deleteProfileImage = async(req, res) => {
 
         return successResponse({
             message: 'deleted profile image',
+            res: res,
+            info: "",
+            status: 200
+        });
+    } catch (error) {
+        return errorResponse({ error, res });
+    }
+}
+
+export const uploadSocialLinks = async(req, res) => {
+    try {
+        const updatedUser = await uploadSocialLinksService({
+            github: req.body?.socialLinks?.github,
+            twitter: req.body?.socialLinks?.twitter,
+            linkedin: req.body?.socialLinks?.linkedin,
+            userName: req.user.userName,
+        });
+
+        return successResponse({
+            message: 'uploaded social links',
+            res: res,
+            info: updatedUser,
+            status: 200
+        });
+    } catch (error) {
+        return errorResponse({ error, res });
+    }
+}
+
+export const deleteSocialLinks = async(req, res) => {
+    try {
+        const updatedUser = await deleteSocialLinksService({
+            github: req.body?.socialLinks?.github,
+            twitter: req.body?.socialLinks?.twitter,
+            linkedin: req.body?.socialLinks?.linkedin,
+            userName: req.user.userName,
+        });
+
+        return successResponse({
+            message: 'uploaded social links',
+            res: res,
+            info: updatedUser,
+            status: 200
+        });
+    } catch (error) {
+        return errorResponse({ error, res });
+    }
+}
+
+export const uploadSkills = async(req, res) => {
+    try {
+        const updatedUser = await uploadSkillsService({
+            userName: req.user.userName,
+            skill: req.body.skill
+        });
+
+        return successResponse({
+            message: 'uploaded skills',
+            res: res,
+            info: updatedUser,
+            status: 200
+        });
+    } catch (error) {
+        return errorResponse({ error, res });
+    }
+}
+
+export const deleteSkill = async(req, res) => {
+    try {
+        const updatedUser = await deleteSkillService({
+            userName: req.user.userName,
+            skill: req.body.skill
+        });
+
+        return successResponse({
+            message: 'deleted skills',
+            res: res,
+            info: updatedUser,
+            status: 200
+        });
+    } catch (error) {
+        return errorResponse({ error, res });
+    }
+}
+
+export const uploadLocation = async(req, res) => {
+    try {
+        await uploadLocationService({
+            userName: req.user.userName,
+            location: req.body.location
+        });
+
+        return successResponse({
+            message: 'uploaded location',
+            res: res,
+            info: req.body.location,
+            status: 200
+        });
+    } catch (error) {
+        return errorResponse({ error, res });
+    }
+}
+
+export const deleteLocation = async(req, res) => {
+    try {
+        await deleteLocationService({
+            userName: req.user.userName
+        });
+
+        return successResponse({
+            message: 'deleted location',
             res: res,
             info: "",
             status: 200

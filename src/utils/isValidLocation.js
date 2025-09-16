@@ -7,7 +7,8 @@ export const isValidLocation = async (location) => {
 
   try {
     const res = await axios.get(url);
-    return res.data.status === "OK" && res.data.results.length > 0;
+    console.log(res);
+    return res.data.status === 200 && res.data.results.length > 0;
   } catch (err) {
     console.error("Location check error:", err.message);
     return false;

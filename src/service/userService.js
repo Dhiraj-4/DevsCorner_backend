@@ -4,7 +4,13 @@ import {
     uploadProfileImage as uploadProfileImageRepository,
     uploadResume as uploadResumeRepository,
     deleteResume as deleteResumeRepository,
-    deleteProfileImage as deleteProfileImageRepository
+    deleteProfileImage as deleteProfileImageRepository,
+    uploadSocialLinks as uploadSocialLinksRepository,
+    deleteSocialLinks as deleteSocialLinksRepository,
+    uploadSkills as uploadSkillsRepository,
+    deleteSkill as deleteSkillRepository,
+    uploadLocation as uploadLocationRepository,
+    deleteLocation as deleteLocationRepository
 } from '../repository/userRepository.js';
 import leoProfanity from 'leo-profanity';
 import { isUrlReachable } from '../utils/isUrlReachable.js';
@@ -217,4 +223,55 @@ export const deleteProfileImage = async({ userName }) => {
 
   await deleteProfileImageRepository({ userName });
 
+}
+
+export const uploadSocialLinks = async({ github, linkedin, twitter, userName }) => {
+    const update = {};
+    update.userName = userName;
+    if(github) update.github = github;
+    if(linkedin) update.linkedin = linkedin;
+    if(twitter) update.twitter = twitter;
+
+    return await uploadSocialLinksRepository({ update });
+}
+
+export const deleteSocialLinks = async({ github, linkedin, twitter, userName }) => {
+    const update = {};
+    update.userName = userName;
+    if(github) update.github = "";
+    if(linkedin) update.linkedin = "";
+    if(twitter) update.twitter = "";
+
+    return await deleteSocialLinksRepository({ update });
+}
+
+export async function uploadSkills({userName, skill}) {
+  const user = await getMeRepository({userName});
+
+  if (user.skills && user.skills[skill]) {
+    throw { status: 400, message: "Skill already exists" };
+  }
+
+  return await uploadSkillsRepository({userName, skill});
+}
+
+export const deleteSkill = async({ userName, skill }) => {
+  const user = await getMeRepository({ userName });
+
+  if (!user.skills || !user.skills[skill]) {
+    throw { status: 404, message: "Skill not found" };
+  }
+
+  return await deleteSkillRepository({userName, skill});
+}
+
+export const uploadLocation = async({ userName, location }) => {
+
+  if(!isValidLocation(location)) throw { message: "invalid location", status: 400 };
+
+  await uploadLocationRepository({ userName, location });
+}
+
+export const deleteLocation = async({ userName }) => {
+  return await deleteLocationRepository({ userName });
 }

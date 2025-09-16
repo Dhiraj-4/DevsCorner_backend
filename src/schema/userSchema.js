@@ -63,12 +63,15 @@ const userSchema = new mongoose.Schema(
 
     location: { type: String },
 
-    skills: [String],
+    skills: {
+      type: Object,
+      default: {}
+    },
 
     socialLinks: {
-      github: String,
-      linkedin: String,
-      twitter: String,
+      github: { type: String, default: "" },
+      linkedin: { type: String, default: "" },
+      twitter: { type: String, default: "" },
     },
 
     resume: {

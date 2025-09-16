@@ -18,9 +18,7 @@ export const initiateSignup = async({ email, password, fullName, userName }) => 
     const hashPassword = await bcrypt.hash(password, 12);
     const otp = process.env.NODE_ENV === 'test' ? "123456" : generateSecureOTP();
 
-    if(process.env.NODE_ENV !== 'test') {
-
-        const info = await transporter.sendMail({
+    const info = await transporter.sendMail({
         from: `"DevsCorner 🚀" <${SMTP_USER}>`,
         to: email,
         subject: "🔐 Your DevsCorner OTP Code",
@@ -39,9 +37,9 @@ export const initiateSignup = async({ email, password, fullName, userName }) => 
             <p style="font-size: 12px; color: #6e7681;">DevsCorner • Built for developers, by developers</p>
           </div>
         `
-        });
-        console.log("Message sent:", info.messageId);
-    }
+    });
+    console.log("Message sent:", info.messageId);
+        
     const payload = {
         email,
         password: hashPassword,

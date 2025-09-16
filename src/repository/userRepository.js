@@ -78,3 +78,67 @@ export const deleteProfileImage = async({ userName }) => {
   );
 
 }
+
+export const uploadSocialLinks = async ({ update }) => {
+  const { userName, ...socialLinks } = update; // separate userName
+
+  // Build update object only with available social fields
+  const fieldsToUpdate = {};
+  if (socialLinks.github) fieldsToUpdate["socialLinks.github"] = socialLinks.github;
+  if (socialLinks.linkedin) fieldsToUpdate["socialLinks.linkedin"] = socialLinks.linkedin;
+  if (socialLinks.twitter) fieldsToUpdate["socialLinks.twitter"] = socialLinks.twitter;
+
+  // Update user by userName
+  return await User.findOneAndUpdate(
+    { userName },
+    { $set: fieldsToUpdate },
+    { new: true } // return updated user
+  ).lean();
+};
+
+export const deleteSocialLinks = async ({ update }) => {
+  const { userName, ...socialLinks } = update;
+
+  const fieldsToUpdate = {};
+  if ("github" in socialLinks) fieldsToUpdate["socialLinks.github"] = "";
+  if ("linkedin" in socialLinks) fieldsToUpdate["socialLinks.linkedin"] = "";
+  if ("twitter" in socialLinks) fieldsToUpdate["socialLinks.twitter"] = "";
+
+  return await User.findOneAndUpdate(
+    { userName },
+    { $set: fieldsToUpdate },
+    { new: true }
+  ).lean();
+};
+
+export const uploadSkills = async ({ skill, userName }) => {
+  return await User.findOneAndUpdate(
+    { userName },
+    { $set: { [`skills.${skill}`]: skill } },
+    { new: true }
+  );
+};
+
+export const deleteSkill = async ({ userName, skill }) => {
+  return await User.findOneAndUpdate(
+    { userName },
+    { $unset: { [`skills.${skill}`]: 1 } },
+    { new: true }
+  );
+};
+
+export const uploadLocation = async({ userName, location }) => {
+  return await User.findOneAndUpdate(
+    { userName },
+    { location },
+    { new: true }
+  );
+}
+
+export const deleteLocation = async({ userName }) => {
+  await User.findOneAndUpdate(
+    { userName },
+    { location: "" },
+    { new: true }
+  );
+}
