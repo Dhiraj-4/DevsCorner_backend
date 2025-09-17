@@ -1,6 +1,6 @@
 import { 
     getMe as getMeService,
-    updateProfileHandler as updateProfileHandlerService,
+    updateBioFullName as updateBioFullNameService,
     generateUploadUrl as generateUploadUrlService,
     uploadProfileImage as uploadProfileImageService,
     generateResumeUploadUrl as generateResumeUploadUrlService,
@@ -33,15 +33,11 @@ export const getMe = async(req, res) => {
     }
 }
 
-export const updateProfileHandler = async(req, res) => {
+export const updateBioFullName = async(req, res) => {
     try {
-        const user = await updateProfileHandlerService({
-            fullName: req.body.fullName,
-            bio: req.body.bio,
-            skills: req.body.skills,
-            location: req.body.location,
-            resume: req.body.resume,
-            socials: req.body.socials,
+        const user = await updateBioFullNameService({
+            fullName: req.body?.fullName,
+            bio: req.body?.bio,
             userName: req.user.userName,
         });
 

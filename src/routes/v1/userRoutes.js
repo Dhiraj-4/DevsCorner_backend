@@ -1,8 +1,8 @@
 import express from 'express';
 import { accessTokenValidator } from '../../validators/authValidators/accessTokenValidator.js';
-import { deleteLocation, deleteProfileImage, deleteResume, deleteSkill, deleteSocialLinks, generateResumeUploadUrl, generateUploadUrl, getMe, getResumeDownloadUrl, updateProfileHandler, uploadLocation, uploadProfileImage, uploadResume, uploadSkills, uploadSocialLinks } from '../../controller/userController.js';
-import { userValidator } from '../../validators/userValidators/userValidator.js';
-import { updateSchema } from '../../validators/userValidators/updateValidator.js';
+import { deleteLocation, deleteProfileImage, deleteResume, deleteSkill, deleteSocialLinks, generateResumeUploadUrl, generateUploadUrl, getMe, getResumeDownloadUrl, updateBioFullName, uploadLocation, uploadProfileImage, uploadResume, uploadSkills, uploadSocialLinks } from '../../controller/userController.js';
+import { bioFullNameValidator } from '../../validators/userValidators/bio and full name/bioFullNameValidator.js';
+import { bioFullNameSchema } from '../../validators/userValidators/bio and full name/bioFullNameSchema.js';
 import { fileValidator } from '../../validators/userValidators/fileUploader/fileValidator.js';
 import { fileSchema } from '../../validators/userValidators/fileUploader/fileValidatorSchema.js';
 import { socialLinksValidator } from '../../validators/userValidators/socail links validator/socailLinksValidator.js';
@@ -16,7 +16,7 @@ const router = express.Router();
 
 router.get('/me', accessTokenValidator, getMe);
 
-router.patch('/update-profile', accessTokenValidator, userValidator(updateSchema), updateProfileHandler);
+router.patch('/update-bio-fullname', accessTokenValidator, bioFullNameValidator(bioFullNameSchema), updateBioFullName);
 
 router.post("/generate-upload-url", accessTokenValidator, fileValidator(fileSchema), generateUploadUrl);
 

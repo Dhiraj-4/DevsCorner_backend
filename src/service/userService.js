@@ -1,6 +1,6 @@
 import {
     getMe as getMeRepository,
-    updateProfileHandler as updateProfileHandlerRepository,
+    updateBioFullName as updateBioFullNameRepository,
     uploadProfileImage as uploadProfileImageRepository,
     uploadResume as uploadResumeRepository,
     deleteResume as deleteResumeRepository,
@@ -29,40 +29,18 @@ export const getMe = async({ userName }) => {
     return user;
 }
 
-export const updateProfileHandler = async ({ userName, fullName, resume, bio, skills, socials, location }) => {
+export const updateBioFullName = async ({ userName, fullName, bio }) => {
 
   //created an update object and will store the fields which are not undefined or ""
   const update = {};
 
   // check the fields which are not undefined or empty string
-  if (userName) update.userName = userName;
+  update.userName = userName;
   if (fullName) update.fullName = fullName;
-  if (resume) update.resume = resume;
   if (bio) update.bio = leoProfanity.clean(bio);
-  if (skills) update.skills = skills;
-
-  //check if the location is valid and if the website url is reachable
-  if (location && await isValidLocation(location)) update.location = location;
-
-  // check if the socials links are available and are they reachable  
-  if (socials) {
-    update.socials = {};
-    
-    if (socials.github && await isUrlReachable(socials.github)) {
-      update.socials.github = socials.github;
-    }
-
-    if (socials.linkedin && await isUrlReachable(socials.linkedin)) {
-      update.socials.linkedin = socials.linkedin;
-    }
-
-    if (socials.twitter && await isUrlReachable(socials.twitter)) {
-      update.socials.twitter = socials.twitter;
-    }
-  }
 
   //call the repo layer with the filtered update object
-  const user = await updateProfileHandlerRepository({ update });
+  const user = await updateBioFullNameRepository({ update });
   return user;
 };
 

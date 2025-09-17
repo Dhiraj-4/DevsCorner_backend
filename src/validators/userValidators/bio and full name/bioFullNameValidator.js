@@ -1,13 +1,8 @@
-export const userValidator = (schema) => {
+export const bioFullNameValidator = (schema) => {
     return (req, res, next) => {
         const object = {
             fullName: req.body?.fullName,
-            email: req.body?.email,
-            bio: req.body?.bio,
-            resume: req.body?.resume,
-            skills: req.body?.skills,
-            location: req.body?.location,
-            socials: req.body?.socials,
+            bio: req.body?.bio
         }
         try {
             schema.parse(object);

@@ -5,7 +5,7 @@ export const getMe = async({ userName }) => {
     return user;
 }
 
-export const updateProfileHandler = async ({ update }) => {
+export const updateBioFullName = async ({ update }) => {
   const user = await User.findOne({ userName: update.userName });
   if (!user) throw { message: 'User not found', status: 404 };
 
