@@ -6,7 +6,7 @@ dotenv.config();
 export const PORT = process.env.PORT || 8080;
 
 export const FRONTEND_URL = process.env.NODE_ENV === 'production'
-  ? 'https://devscorner-frontend.onrender.com/'
+  ? 'https://devscorner-frontend.onrender.com'
   : 'http://localhost:5173';
 
 export const SMTP_USER = process.env.SMTP_USER;
