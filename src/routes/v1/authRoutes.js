@@ -9,24 +9,25 @@ import { refreshTokenValidator } from '../../validators/authValidators/refreshTo
 import { forgotPasswdSchema } from '../../validators/authValidators/forgotPasswdZodSchema.js';
 import { passwordResetTokenValidator } from '../../validators/authValidators/passwordResetTokenValidator.js';
 import { updatePasswordSchema } from '../../validators/authValidators/passwordSchema.js';
+import { forgotPassLimiter, loginLimiter, signupLimiter } from '../../utils/rateLimiting.js';
 
 const router = express.Router();
 
-router.post('/signup/initiate', authValidator(signupSchema), initiateSignup);
-router.post('/signup/verify', optTokenValidator, verifySignup);
+router.post('/signup/initiate', signupLimiter, authValidator(signupSchema), initiateSignup);
+router.post('/signup/verify', signupLimiter, optTokenValidator, verifySignup);
 
-router.post('/login', authValidator(loginSchema), login);
+router.post('/login', loginLimiter, authValidator(loginSchema), login);
 
 router.post('/logout', refreshTokenValidator, logout);
 
 //returns otpVerificationTokn and sends otp
-router.post('/forgot-password', authValidator(forgotPasswdSchema) ,forgotPassword);
+router.post('/forgot-password', forgotPassLimiter, authValidator(forgotPasswdSchema) ,forgotPassword);
 
 //verifies otp and otpVerificationTokn and returns passwordResetToken
-router.post("/reset-password/initiate", optTokenValidator, resetPassword);
+router.post("/reset-password/initiate", forgotPassLimiter, optTokenValidator, resetPassword);
 
 //verifies passwordResetToken and resets password
-router.post("/update-password", passwordResetTokenValidator, authValidator(updatePasswordSchema), updatePassword);
+router.post("/update-password", forgotPassLimiter, passwordResetTokenValidator, authValidator(updatePasswordSchema), updatePassword);
 
 router.post('/refresh', refreshTokenValidator, renewAccessToken);
 

@@ -16,7 +16,7 @@ export const initiateSignup = async({ email, password, fullName, userName }) => 
     await initiateSignupRepository({ email , userName });
     
     const hashPassword = await bcrypt.hash(password, 12);
-    const otp = process.env.NODE_ENV === 'test' ? "123456" : generateSecureOTP();
+    const otp = generateSecureOTP();
 
     const info = await transporter.sendMail({
         from: `"DevsCorner 🚀" <${SMTP_USER}>`,
@@ -95,10 +95,9 @@ export const login = async({ identifier, password }) => {
 export const forgotPassword = async({ identifier }) => {
     const user = await findUser({ identifier });
 
-    const otp = process.env.NODE_ENV === 'test' ? "123456" : generateSecureOTP();
+    const otp = generateSecureOTP();
 
     const email = user.email;
-    if(process.env.NODE_ENV !== 'test') {
 
         const info = await transporter.sendMail({
         from: `"DevsCorner 🚀" <${SMTP_USER}>`,
@@ -121,9 +120,8 @@ export const forgotPassword = async({ identifier }) => {
         `
         });
         console.log("Message sent:", info.messageId);
-    }
 
-    const hashOtp = await bcrypt.hash(otp, 12);
+    const hashOtp = await bcrypt.hash(String(otp), 12);
 
     user.otp = {
         code: hashOtp,
@@ -151,7 +149,7 @@ export const resetPassword = async({ otp, userName }) => {
         throw{ message: 'Otp expired', status: 401 };
     }
 
-    const isMatch = await bcrypt.compare(otp, user.otp.code);
+    const isMatch = await bcrypt.compare(String(otp), user.otp.code);
 
     if(!isMatch) throw { message: 'Invalid Otp', status: 400 };
 
