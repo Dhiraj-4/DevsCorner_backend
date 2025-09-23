@@ -4,12 +4,14 @@ import {
     initiateSignup as initiateSignupRepository,
     verifySignup as verifySignupRepository,
     login as loginRepository,
-    findUser
+    findUser,
+    googleCreateUser
 } from "../repository/authRepository.js";
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import { transporter } from '../config/nodemailerConfig.js'
+import { User } from "../schema/userSchema.js";
 
 export const initiateSignup = async({ email, password, fullName, userName }) => {
 
@@ -70,7 +72,9 @@ export const login = async({ identifier, password }) => {
 
     const user = await loginRepository({ identifier });
 
-    if(!user) throw { message: "User not found.", status: 404 }
+    if(!user) throw { message: "Invalid user", status: 404 }
+
+    if(!user.password) throw {message: "Invalid password", status: 400}
 
     const isMatch = await bcrypt.compare(password, user.password);
 
@@ -204,3 +208,40 @@ export const updatePassword = async ({ passwordResetToken, userName, password })
 
   return;
 };
+
+export const googleAuth = async({ name, email, profileImage, sub, message }) => {
+
+  if(message == "Create user") {
+    let baseUserName = name.toLowerCase().trim().replace(/\s+/g, "");
+
+    let userName = `${baseUserName}${Math.floor(1000 + Math.random() * 9000)}`;
+
+    let exists = await User.findOne({ userName });
+
+    while (exists) {
+      userName = `${baseUserName}${Math.floor(1000 + Math.random() * 9000)}`;
+      exists = await User.findOne({ userName });
+    }
+    const fullName = name;
+
+    await googleCreateUser({ email, fullName, profileImage, sub, userName });
+
+  }
+    let user = await User.findOne({ email });
+
+    const payload = {
+      userName: user.userName
+    }
+    const accessToken = jwt.sign(payload, ACCESS_SECRET_KEY, { expiresIn: '15m' });
+
+    const refreshToken = jwt.sign(payload, REFRESH_SECRET_KEY, { expiresIn: '1d' });
+
+
+    const response = {
+        message: "Logged in",
+        accessToken,
+        refreshToken,
+        user
+    }
+    return response;
+}

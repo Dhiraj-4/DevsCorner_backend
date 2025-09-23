@@ -26,7 +26,7 @@ const jobSchema = new mongoose.Schema(
 
     companyName: {
       type: String,
-      default: "",
+      default: "indie",
     },
   },
   {

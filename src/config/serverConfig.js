@@ -9,6 +9,8 @@ export const FRONTEND_URL = process.env.NODE_ENV === 'production'
   ? 'https://devscorner-frontend.onrender.com'
   : 'http://localhost:5173';
 
+export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+
 export const SMTP_USER = process.env.SMTP_USER;
 
 export const SMTP_PASS = process.env.SMTP_PASS;

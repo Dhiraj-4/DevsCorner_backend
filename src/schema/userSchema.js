@@ -26,10 +26,15 @@ const userSchema = new mongoose.Schema(
       trim: true,
     },
 
+    googleId: {
+      type: String,
+      trim: true,
+      unique: true,
+      select: false
+    },
+
     password: {
       type: String,
-      required: [true, "Password is required"],
-      minlength: 8,
       select: false, // hide in queries
     },
 

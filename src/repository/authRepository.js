@@ -44,3 +44,9 @@ export const findUser = async({ identifier }) => {
 
     return user;
 }
+
+export const googleCreateUser = async({ email, userName, profileImage, fullName, sub}) => {
+    const user = User.create({ email, userName, fullName, profileImage, googleId: sub });
+
+    return user;
+}

@@ -4,7 +4,8 @@ import {
     login as loginService,
     forgotPassword as forgotPasswordService,
     resetPassword as resetPasswordService,
-    updatePassword as updatePasswordService
+    updatePassword as updatePasswordService,
+    googleAuth as googleAuthService
 } from '../service/authService.js';
 import { errorResponse, successResponse } from '../utils/responseHelper.js';
 
@@ -141,6 +142,34 @@ export const updatePassword = async(req, res) => {
             status: 200,
             res: res
         });
+    } catch (error) {
+        return errorResponse({ error, res });
+    }
+}
+
+export const googleAuth = async(req, res) => {
+    try {
+        const response = await googleAuthService({
+            email: req.user?.email,
+            name: req.user?.name,
+            profileImage: req.user?.picture,
+            sub: req.user?.sub,
+            message: req.message
+        });
+
+
+        res.status(200).cookie("refreshToken", response.refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "None",
+        maxAge: 1 * 24 * 60 * 60 * 1000,
+        path: "/"
+        }).json({
+        message: 'Login Successful',
+        success: true,
+        info: response.accessToken
+        });
+
     } catch (error) {
         return errorResponse({ error, res });
     }

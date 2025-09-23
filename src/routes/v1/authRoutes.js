@@ -1,7 +1,7 @@
 import express from 'express';
 import { authValidator } from '../../validators/authValidators/authZodValidator.js';
 import { signupSchema } from '../../validators/authValidators/signupZodSchema.js';
-import { forgotPassword, initiateSignup, login, logout, resetPassword, updatePassword, verifySignup } from '../../controller/authController.js';
+import { forgotPassword, googleAuth, initiateSignup, login, logout, resetPassword, updatePassword, verifySignup } from '../../controller/authController.js';
 import { optTokenValidator } from '../../validators/authValidators/otpTokenValidator.js';
 import { loginSchema } from '../../validators/authValidators/loginZodSchema.js';
 import { renewAccessToken } from '../../controller/refreshTokenController.js';
@@ -10,6 +10,7 @@ import { forgotPasswdSchema } from '../../validators/authValidators/forgotPasswd
 import { passwordResetTokenValidator } from '../../validators/authValidators/passwordResetTokenValidator.js';
 import { updatePasswordSchema } from '../../validators/authValidators/passwordSchema.js';
 import { forgotPassLimiter, loginLimiter, signupLimiter } from '../../utils/rateLimiting.js';
+import { googleAuthValidator } from '../../validators/authValidators/googleAuthValidator.js';
 
 const router = express.Router();
 
@@ -30,5 +31,7 @@ router.post("/reset-password/initiate", forgotPassLimiter, optTokenValidator, re
 router.post("/update-password", forgotPassLimiter, passwordResetTokenValidator, authValidator(updatePasswordSchema), updatePassword);
 
 router.post('/refresh', refreshTokenValidator, renewAccessToken);
+
+router.post("/google", googleAuthValidator, googleAuth);
 
 export default router;
