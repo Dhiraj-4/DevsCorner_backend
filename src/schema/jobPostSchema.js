@@ -7,16 +7,17 @@ const jobSchema = new mongoose.Schema(
       required: true,
     },
 
+    jobId: {
+      type: String,
+      required: true,
+      unique: true
+    },
+
     text: {
       type: String,
       required: true,
       minlength: 50,
       maxlength: 3000,
-    },
-
-    image: {
-      type: String,
-      default: "",
     },
 
     applyLink: {
@@ -30,7 +31,7 @@ const jobSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true, // createdAt & updatedAt
+    timestamps: true,
   }
 );
 
