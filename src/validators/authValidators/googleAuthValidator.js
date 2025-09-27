@@ -18,11 +18,10 @@ export const googleAuthValidator = async(req, res, next) => {
         // Verify token
         const ticket = await client.verifyIdToken({
             idToken: token,
-            audience: GOOGLE_CLIENT_ID, // match the client id
+            audience: GOOGLE_CLIENT_ID,
         });
 
         const payload = ticket.getPayload();
-        console.log(payload);
         const { email } = payload;
 
         const user = await User.findOne({ email });

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { maxLength, minLength, required } from "zod/v4-mini";
 
 const jobSchema = new mongoose.Schema(
   {
@@ -25,9 +26,19 @@ const jobSchema = new mongoose.Schema(
       default: "",
     },
 
+    role: {
+      type: String,
+      default: "",
+      minLength: 5,
+      maxLength: 30,
+      required: true
+    },
+
     companyName: {
       type: String,
       default: "indie",
+      minLength: 1,
+      maxLength: 50
     },
   },
   {
