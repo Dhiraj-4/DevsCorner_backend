@@ -43,6 +43,11 @@ export const updateRole = async({ role, jobId }) => {
     return job;
 }
 
+export const getOwnersJobs = async({ userName }) => {
+    const jobs = await Job.find({ owner: userName });
+    return jobs;
+}
+
 export const deleteJob = async({ jobId }) => {
     const job = await Job.findOneAndDelete({ jobId });
     return job;

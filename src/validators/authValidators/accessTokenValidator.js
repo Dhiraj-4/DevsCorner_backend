@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { ACCESS_SECRET_KEY} from "../../config/serverConfig.js";
+import { getMe } from "../../repository/userRepository.js"
 
 export const accessTokenValidator = async(req, res, next) => {
 
@@ -17,6 +18,15 @@ export const accessTokenValidator = async(req, res, next) => {
         if(err) {
             return res.status(403).json({
                 message: 'Invalid or expired access token',
+                success: false
+            });
+        }
+        const { userName } = decoded;
+
+        const user = getMe({ userName });
+        if(!user) {
+            return res.status(403).json({
+                message: "Invalid user",
                 success: false
             });
         }

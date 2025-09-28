@@ -6,7 +6,8 @@ import {
     updateApplyLink as updateApplyLinkRepository,
     updateCompanyName as updateCompanyNameRepository,
     deleteJob as deleteJobRepository,
-    updateRole as updateRoleRespository
+    updateRole as updateRoleRespository,
+    getOwnersJobs as getOwnersJobsRepository
 } from "../repository/jobRepository.js"
 
 export const jobPost = async({ owner, text, applyLink, companyName, role }) => {
@@ -117,6 +118,15 @@ export const updateRole = async({ userName, jobId, role }) => {
     });
 
     return job;
+}
+
+export const getOwnersJobs = async({ userName }) => {
+
+    const jobs = getOwnersJobsRepository({
+        userName
+    });
+
+    return jobs;
 }
 
 export const deleteJob = async({ userName, jobId }) => {

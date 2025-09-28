@@ -7,7 +7,8 @@ import {
     deleteApplyLink as deleteApplyLinkService,
     deleteCompanyName as deleteCompanyNameService,
     deleteJob as deleteJobService,
-    updateRole as updateRoleService
+    updateRole as updateRoleService,
+    getOwnersJobs as getOwnersJobsService
 } from "../service/jobService.js";
 
 export const jobPost = async(req, res) => {
@@ -137,6 +138,23 @@ export const updateRole = async(req, res) => {
             status: 200,
             res: res,
             info: job
+        });
+    } catch (error) {
+        return errorResponse({ error, res });
+    }
+}
+
+export const getOwnersJobs = async(req, res) => {
+    try {
+        const jobs = await getOwnersJobsService({
+            userName: req.user.userName,
+        });
+
+        return successResponse({
+            message: "Fetched Owner's jobs",
+            status: 200,
+            res: res,
+            info: jobs
         });
     } catch (error) {
         return errorResponse({ error, res });
