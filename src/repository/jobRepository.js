@@ -43,8 +43,15 @@ export const updateRole = async({ role, jobId }) => {
     return job;
 }
 
-export const getOwnersJobs = async({ userName }) => {
-    const jobs = await Job.find({ owner: userName });
+export const getOwnersJobs = async({ userName, limit, skip }) => {
+    const jobs = await Job.find({ owner: userName })
+                            .skip(skip)
+                            .limit(limit);
+    return jobs;
+}
+
+export const getJobs = async({ limit, skip }) => {
+    const jobs = await Job.find().skip(skip).limit(limit);
     return jobs;
 }
 

@@ -7,7 +7,8 @@ import {
     updateCompanyName as updateCompanyNameRepository,
     deleteJob as deleteJobRepository,
     updateRole as updateRoleRespository,
-    getOwnersJobs as getOwnersJobsRepository
+    getOwnersJobs as getOwnersJobsRepository,
+    getJobs as getJobsRepository
 } from "../repository/jobRepository.js"
 
 export const jobPost = async({ owner, text, applyLink, companyName, role }) => {
@@ -120,13 +121,36 @@ export const updateRole = async({ userName, jobId, role }) => {
     return job;
 }
 
-export const getOwnersJobs = async({ userName }) => {
+export const getOwnersJobs = async({ userName, page }) => {
+
+    const limit = 10;
+    const skip = (page - 1) * limit;
 
     const jobs = getOwnersJobsRepository({
-        userName
+        userName,
+        limit,
+        skip
     });
 
-    return jobs;
+    return { 
+        jobs, 
+        hasMore: (limit === jobs.length) 
+    };
+}
+
+export const getJobs = async({ page }) => {
+    const limit = 10;
+    const skip = (page - 1) * limit;
+
+    const jobs = getJobsRepository({
+        limit,
+        skip
+    });
+
+    return { 
+        jobs, 
+        hasMore: (limit === jobs.length) 
+    };
 }
 
 export const deleteJob = async({ userName, jobId }) => {

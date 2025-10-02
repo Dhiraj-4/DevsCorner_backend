@@ -8,7 +8,8 @@ import {
     deleteCompanyName as deleteCompanyNameService,
     deleteJob as deleteJobService,
     updateRole as updateRoleService,
-    getOwnersJobs as getOwnersJobsService
+    getOwnersJobs as getOwnersJobsService,
+    getJobs as getJobsService
 } from "../service/jobService.js";
 
 export const jobPost = async(req, res) => {
@@ -146,18 +147,40 @@ export const updateRole = async(req, res) => {
 
 export const getOwnersJobs = async(req, res) => {
     try {
-        const jobs = await getOwnersJobsService({
+        const page = parseInt(req.query.page) || 1;
+
+        const response = await getOwnersJobsService({
             userName: req.user.userName,
+            page
         });
 
         return successResponse({
             message: "Fetched Owner's jobs",
             status: 200,
             res: res,
-            info: jobs
+            info: response
         });
     } catch (error) {
         return errorResponse({ error, res });
+    }
+}
+
+export const getJobs = async(req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+
+        const response = await getJobsService({
+            page
+        });
+
+        return successResponse({
+            message: "Fetched jobs",
+            status: 200,
+            res: res,
+            info: response
+        });
+    } catch (error) {
+        return errorResponse({ error, res });        
     }
 }
 

@@ -2,7 +2,7 @@ import express from "express";
 import { accessTokenValidator } from "../../validators/authValidators/accessTokenValidator.js";
 import { jobValidator } from "../../validators/jobValidators/jobValidator.js";
 import { jobZodSchema } from "../../validators/jobValidators/jobZodSchema.js";
-import { deleteApplyLink, deleteCompanyName, deleteJob, getOwnersJobs, jobPost, updateApplyLink, updateCompanyName, updateJobText, updateRole } from "../../controller/jobController.js";
+import { deleteApplyLink, deleteCompanyName, deleteJob, getJobs, getOwnersJobs, jobPost, updateApplyLink, updateCompanyName, updateJobText, updateRole } from "../../controller/jobController.js";
 
 const router = express.Router();
 
@@ -29,11 +29,11 @@ router.delete("/delete-companyName", accessTokenValidator, jobValidator(jobZodSc
 router.patch("/update-role", accessTokenValidator, jobValidator(jobZodSchema("update-role")), updateRole);
 
 
-//get jobs
+//get jobs and my-jobs
 
 router.get("/my-jobs", accessTokenValidator, getOwnersJobs);
 
-// router.get("/", accessTokenValidator, getJobs);
+router.get("/", accessTokenValidator, getJobs);
 
 //delete job post
 
