@@ -1,4 +1,4 @@
-import { jobPost as jobPostRepository } from "../repository/jobRepository.js";
+import { isOwner, jobPost as jobPostRepository } from "../repository/jobRepository.js";
 import { v4 as uuidv4 } from "uuid";
 import {
     getJob as getJobRepository,
@@ -11,7 +11,7 @@ import {
     getJobs as getJobsRepository
 } from "../repository/jobRepository.js"
 
-export const jobPost = async({ owner, text, applyLink, companyName, role }) => {
+export const jobPost = async({ userName, text, applyLink, companyName, role }) => {
     const createPost = {};
 
     if(applyLink) createPost.applyLink = applyLink;
@@ -25,7 +25,7 @@ export const jobPost = async({ owner, text, applyLink, companyName, role }) => {
     const job = await jobPostRepository({
         jobId,
         role,
-        owner,
+        userName,
         text,
         applyLink: createPost.applyLink,
         companyName: createPost.companyName
@@ -36,10 +36,7 @@ export const jobPost = async({ owner, text, applyLink, companyName, role }) => {
 
 export const updateJobText = async({ userName, jobId, text }) => {
 
-    const oldJob = await getJobRepository({ jobId });
-
-    if(!oldJob) throw { message: "invalid job id", status: 400 };
-    if(oldJob.owner != userName) throw { message: "invalid owner", status: 403};
+    await isOwner({ userName, jobId });
 
     const job = await updateJobTextRepository({
         text,
@@ -50,10 +47,7 @@ export const updateJobText = async({ userName, jobId, text }) => {
 }
 
 export const updateApplyLink = async({ userName, jobId, applyLink }) => {
-    const oldJob = await getJobRepository({ jobId });
-
-    if(!oldJob) throw { message: "invalid job id", status: 400 };
-    if(oldJob.owner != userName) throw { message: "invalid owner", status: 403};
+    await isOwner({ userName, jobId });;
 
     if(!(await isUrlReachable(applyLink))) throw { message: "invalid apply link", status: 400 };
 
@@ -66,10 +60,7 @@ export const updateApplyLink = async({ userName, jobId, applyLink }) => {
 }
 
 export const updateCompanyName = async({ userName, companyName, jobId }) => {
-    const oldJob = await getJobRepository({ jobId });
-
-    if(!oldJob) throw { message: "invalid job id", status: 400 };
-    if(oldJob.owner != userName) throw { message: "invalid owner", status: 403};
+    await isOwner({ userName, jobId });
 
     const job = await updateCompanyNameRepository({
         jobId,
@@ -80,10 +71,7 @@ export const updateCompanyName = async({ userName, companyName, jobId }) => {
 }
 
 export const deleteApplyLink = async({ userName, jobId }) => {
-    const oldJob = await getJobRepository({ jobId });
-
-    if(!oldJob) throw { message: "invalid job id", status: 400 };
-    if(oldJob.owner != userName) throw { message: "invalid owner", status: 403};
+    await isOwner({ userName, jobId });
 
     const job = await updateApplyLinkRepository({
         jobId,
@@ -94,10 +82,7 @@ export const deleteApplyLink = async({ userName, jobId }) => {
 }
 
 export const deleteCompanyName = async({ userName, jobId }) => {
-    const oldJob = await getJobRepository({ jobId });
-
-    if(!oldJob) throw { message: "invalid job id", status: 400 };
-    if(oldJob.owner != userName) throw { message: "invalid owner", status: 403};
+    await isOwner({ userName, jobId });
 
     const job = await updateCompanyNameRepository({
         jobId,
@@ -108,10 +93,7 @@ export const deleteCompanyName = async({ userName, jobId }) => {
 }
 
 export const updateRole = async({ userName, jobId, role }) => {
-    const oldJob = await getJobRepository({ jobId });
-
-    if(!oldJob) throw { message: "invalid job id", status: 400 };
-    if(oldJob.owner != userName) throw { message: "invalid owner", status: 403};
+    await isOwner({ userName, jobId });
 
     const job = updateRoleRespository({
         jobId,
@@ -154,10 +136,7 @@ export const getJobs = async({ page }) => {
 }
 
 export const deleteJob = async({ userName, jobId }) => {
-    const oldJob = await getJobRepository({ jobId });
-
-    if(!oldJob) throw { message: "invalid job id", status: 400 };
-    if(oldJob.owner != userName) throw { message: "invalid owner", status: 403};
+    await isOwner({ userName, jobId });
 
     const job = await deleteJobRepository({
         jobId

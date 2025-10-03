@@ -15,7 +15,7 @@ import {
 export const jobPost = async(req, res) => {
     try {
         const job = await jobPostService({
-            owner: req.user.userName,
+            userName: req.user.userName,
             text: req.body.text,
             applyLink: req.body?.applyLink,
             companyName: req.body?.companyName,

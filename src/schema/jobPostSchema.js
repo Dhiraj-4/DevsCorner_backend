@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
-import { maxLength, minLength, required } from "zod/v4-mini";
 
 const jobSchema = new mongoose.Schema(
   {
-    owner: {
-      type: String, // username of the user
-      required: true,
+    owner: { 
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: "User",
+      required: true
     },
 
     jobId: {
