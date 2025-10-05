@@ -114,10 +114,7 @@ export const getOwnersJobs = async({ userName, page }) => {
         skip
     });
 
-    return { 
-        jobs, 
-        hasMore: (limit === jobs.length) 
-    };
+    return jobs
 }
 
 export const getJobs = async({ page }) => {

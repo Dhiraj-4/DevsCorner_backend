@@ -149,16 +149,20 @@ export const getOwnersJobs = async(req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
 
-        const response = await getOwnersJobsService({
+        const jobs = await getOwnersJobsService({
             userName: req.user.userName,
             page
         });
 
+        let hasMore = (jobs.length === 10);
         return successResponse({
             message: "Fetched Owner's jobs",
             status: 200,
             res: res,
-            info: response
+            info: [
+                jobs,
+                hasMore
+            ]
         });
     } catch (error) {
         return errorResponse({ error, res });
