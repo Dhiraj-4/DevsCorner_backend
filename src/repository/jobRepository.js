@@ -2,7 +2,7 @@ import { Job } from "../schema/jobPostSchema.js";
 import { User } from "../schema/userSchema.js";
 
 export const getJob = async({ jobId }) => {
-    const job = await Job.findOne({ jobId });
+    const job = await Job.findOne({ jobId }).populate("owner","userName");
     return job;
 }
 export const jobPost = async({ jobId, userName, applyLink, companyName, text, role }) => {
@@ -44,7 +44,7 @@ export const updateCompanyName = async({ companyName, jobId }) => {
 }
 
 export const updateRole = async({ role, jobId }) => {
-    const job = await Job.findByIdAndUpdate({ jobId }, { role }, { new: true });
+    const job = await Job.findOneAndUpdate({ jobId }, { role }, { new: true });
     return job;
 }
 
@@ -80,5 +80,5 @@ export const isOwner = async({ jobId, userName }) => {
     
     let user = await User.findOne({ userName }).select("_id");
     
-    if(oldJob.owner != user._id) throw { message: "invalid owner", status: 403};
+    if(String(oldJob.owner._id) != String(user._id)) throw { message: "invalid owner", status: 403};
 }

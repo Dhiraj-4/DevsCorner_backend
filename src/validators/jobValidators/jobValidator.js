@@ -1,6 +1,7 @@
 export const jobValidator = (schema) => {
     return (req, res, next) => {
         const object = {
+            jobId: req.body?.jobId,
             text: req.body?.text,
             applyLink: req.body?.applyLink,
             companyName: req.body?.companyName,
