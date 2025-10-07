@@ -173,15 +173,16 @@ export const getJobs = async(req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
 
-        const response = await getJobsService({
+        const jobs = await getJobsService({
             page
         });
 
+        let hasMore = (10 === jobs.length)
         return successResponse({
             message: "Fetched jobs",
             status: 200,
             res: res,
-            info: response
+            info: [jobs, hasMore]
         });
     } catch (error) {
         return errorResponse({ error, res });        

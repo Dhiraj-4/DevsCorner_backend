@@ -18,7 +18,7 @@ const jobSchema = new mongoose.Schema(
       type: String,
       required: true,
       minlength: 50,
-      maxlength: 3000,
+      maxlength: 500,
     },
 
     applyLink: {

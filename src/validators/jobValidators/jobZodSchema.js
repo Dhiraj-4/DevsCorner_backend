@@ -7,7 +7,7 @@ export function jobZodSchema(filter) {
 
             role: z.string().min(5).max(30),
 
-            text: z.string().min(50).max(3000),
+            text: z.string().min(50).max(500),
 
             applyLink: z.string().url().optional(),
 
@@ -17,7 +17,7 @@ export function jobZodSchema(filter) {
     else if(filter == "update-text") {
         return z.object({
             jobId: z.string().uuid(),
-            text: z.string().min(50).max(3000),
+            text: z.string().min(50).max(500),
         });
     }
     else if(filter == "update-applylink") {

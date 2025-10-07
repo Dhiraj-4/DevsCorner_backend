@@ -1,7 +1,7 @@
 import { isOwner, jobPost as jobPostRepository } from "../repository/jobRepository.js";
 import { v4 as uuidv4 } from "uuid";
+import leoProfanity from 'leo-profanity';
 import {
-    getJob as getJobRepository,
     updateJobText as updateJobTextRepository,
     updateApplyLink as updateApplyLinkRepository,
     updateCompanyName as updateCompanyNameRepository,
@@ -17,6 +17,8 @@ export const jobPost = async({ userName, text, applyLink, companyName, role }) =
     if(applyLink) createPost.applyLink = applyLink;
     else createPost.applyLink = "";
 
+    let cleanText = leoProfanity.clean(text);
+
     if(companyName) createPost.companyName = companyName;
     else createPost.companyName = "indie";
 
@@ -26,7 +28,7 @@ export const jobPost = async({ userName, text, applyLink, companyName, role }) =
         jobId,
         role,
         userName,
-        text,
+        text: cleanText,
         applyLink: createPost.applyLink,
         companyName: createPost.companyName
     });
@@ -38,8 +40,10 @@ export const updateJobText = async({ userName, jobId, text }) => {
 
     await isOwner({ userName, jobId });
 
+    let cleanText = leoProfanity.clean(text);
+
     const job = await updateJobTextRepository({
-        text,
+        text: cleanText,
         jobId
     });
 
@@ -48,8 +52,6 @@ export const updateJobText = async({ userName, jobId, text }) => {
 
 export const updateApplyLink = async({ userName, jobId, applyLink }) => {
     await isOwner({ userName, jobId });;
-
-    if(!(await isUrlReachable(applyLink))) throw { message: "invalid apply link", status: 400 };
 
     const job = await updateApplyLinkRepository({
         jobId,
@@ -126,10 +128,7 @@ export const getJobs = async({ page }) => {
         skip
     });
 
-    return { 
-        jobs, 
-        hasMore: (limit === jobs.length) 
-    };
+    return jobs;
 }
 
 export const deleteJob = async({ userName, jobId }) => {

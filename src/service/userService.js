@@ -13,7 +13,6 @@ import {
     deleteLocation as deleteLocationRepository
 } from '../repository/userRepository.js';
 import leoProfanity from 'leo-profanity';
-import { isUrlReachable } from '../utils/isUrlReachable.js';
 import { isValidLocation } from '../utils/isValidLocation.js';
 import { s3 } from '../config/awsConfig.js';
 import { AWS_BUCKET_NAME, AWS_REGION } from '../config/serverConfig.js';
