@@ -252,3 +252,45 @@ export const uploadLocation = async({ userName, location }) => {
 export const deleteLocation = async({ userName }) => {
   return await deleteLocationRepository({ userName });
 }
+
+export const follow_unfollow_user = async ({ userName, otherUserName }) => {
+  if(!otherUserName) throw { message: "Other username is required", status: 400 };
+  // Fetch both users
+  const user = await getMeRepository({ userName });
+  const otherUser = await getMeRepository({ userName: otherUserName });
+
+  console.log(otherUserName);
+  console.log(otherUser, "for testing!!!");
+  if (!user || !otherUser) throw { message: "User not found", status: 400 };
+
+  // Check if already following
+  const isFollowing = user.following.some(
+    (id) => id.toString() === otherUser._id.toString()
+  );
+
+  if (isFollowing) {
+    // Unfollow logic
+    user.following = user.following.filter(
+      (id) => id.toString() !== otherUser._id.toString()
+    );
+    user.countFollowing = Math.max((user.countFollowing || 1) - 1, 0);
+
+    otherUser.followers = otherUser.followers.filter(
+      (id) => id.toString() !== user._id.toString()
+    );
+    otherUser.countFollowers = Math.max((otherUser.countFollowers || 1) - 1, 0);
+
+    await Promise.all([user.save(), otherUser.save()]);
+    return { user, message: "Unfollowed" };
+  } else {
+    // Follow logic
+    user.following.push(otherUser._id);
+    user.countFollowing = (user.countFollowing || 0) + 1;
+
+    otherUser.followers.push(user._id);
+    otherUser.countFollowers = (otherUser.countFollowers || 0) + 1;
+
+    await Promise.all([user.save(), otherUser.save()]);
+    return { user, message: "Followed" };
+  }
+};

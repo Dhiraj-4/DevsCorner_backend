@@ -13,7 +13,8 @@ import {
     uploadSkills as uploadSkillsService,
     deleteSkill as deleteSkillService,
     uploadLocation as uploadLocationService,
-    deleteLocation as deleteLocationService
+    deleteLocation as deleteLocationService,
+    follow_unfollow_user as follow_unfollow_user_service
 } from '../service/userService.js'
 import { errorResponse, successResponse } from "../utils/responseHelper.js";
 
@@ -281,6 +282,24 @@ export const deleteLocation = async(req, res) => {
             message: 'deleted location',
             res: res,
             info: "",
+            status: 200
+        });
+    } catch (error) {
+        return errorResponse({ error, res });
+    }
+}
+
+export const follow_unfollow_user = async(req, res) => {
+    try {
+        const response = await follow_unfollow_user_service({
+            userName: req.user.userName,
+            otherUserName: req.body?.otherUserName
+        });
+
+        return successResponse({
+            message: response.message,
+            res: res,
+            info: response.user,
             status: 200
         });
     } catch (error) {
