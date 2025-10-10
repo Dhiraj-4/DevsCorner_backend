@@ -1,6 +1,6 @@
 import express from 'express';
 import { accessTokenValidator } from '../../validators/authValidators/accessTokenValidator.js';
-import { deleteLocation, deleteProfileImage, deleteResume, deleteSkill, deleteSocialLinks, follow_unfollow_user, generateResumeUploadUrl, generateUploadUrl, getMe, getResumeDownloadUrl, updateBioFullName, uploadLocation, uploadProfileImage, uploadResume, uploadSkills, uploadSocialLinks } from '../../controller/userController.js';
+import { deleteLocation, deleteProfileImage, deleteResume, deleteSkill, deleteSocialLinks, follow_unfollow_user, generateResumeUploadUrl, generateUploadUrl, getMe, getResumeDownloadUrl, getUser, updateBioFullName, uploadLocation, uploadProfileImage, uploadResume, uploadSkills, uploadSocialLinks } from '../../controller/userController.js';
 import { bioFullNameValidator } from '../../validators/userValidators/bio and full name/bioFullNameValidator.js';
 import { bioFullNameSchema } from '../../validators/userValidators/bio and full name/bioFullNameSchema.js';
 import { fileValidator } from '../../validators/userValidators/fileUploader/fileValidator.js';
@@ -45,5 +45,7 @@ router.post("/upload-location", accessTokenValidator, locationValidator(location
 router.delete("/delete-location", accessTokenValidator, deleteLocation);
 
 router.patch("/toggle-follow", accessTokenValidator, follow_unfollow_user);
+
+router.get("/", accessTokenValidator, getUser);
 
 export default router;

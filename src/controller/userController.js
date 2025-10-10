@@ -14,7 +14,8 @@ import {
     deleteSkill as deleteSkillService,
     uploadLocation as uploadLocationService,
     deleteLocation as deleteLocationService,
-    follow_unfollow_user as follow_unfollow_user_service
+    follow_unfollow_user as follow_unfollow_user_service,
+    getUser as getUserService
 } from '../service/userService.js'
 import { errorResponse, successResponse } from "../utils/responseHelper.js";
 
@@ -300,6 +301,23 @@ export const follow_unfollow_user = async(req, res) => {
             message: response.message,
             res: res,
             info: response.user,
+            status: 200
+        });
+    } catch (error) {
+        return errorResponse({ error, res });
+    }
+}
+
+export const getUser = async(req, res) => {
+    try {
+        const user = await getUserService({
+            userName: req.query.userName
+        });
+
+        return successResponse({
+            message: "Fectched user",
+            res: res,
+            info: user,
             status: 200
         });
     } catch (error) {

@@ -255,6 +255,9 @@ export const deleteLocation = async({ userName }) => {
 
 export const follow_unfollow_user = async ({ userName, otherUserName }) => {
   if(!otherUserName) throw { message: "Other username is required", status: 400 };
+
+  if(otherUserName === userName) throw { message: "Can't follow/unfollow yourself"};
+  
   // Fetch both users
   const user = await getMeRepository({ userName });
   const otherUser = await getMeRepository({ userName: otherUserName });
@@ -294,3 +297,8 @@ export const follow_unfollow_user = async ({ userName, otherUserName }) => {
     return { user, message: "Followed" };
   }
 };
+
+export const getUser = async({ userName }) => {
+  const user = getMeRepository({ userName });
+  return user;
+}
