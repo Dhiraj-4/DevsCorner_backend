@@ -1,4 +1,4 @@
-import { isOwner, jobPost as jobPostRepository } from "../repository/jobRepository.js";
+import { isJobOwner, jobPost as jobPostRepository } from "../repository/jobRepository.js";
 import { v4 as uuidv4 } from "uuid";
 import leoProfanity from 'leo-profanity';
 import {
@@ -38,7 +38,7 @@ export const jobPost = async({ userName, text, applyLink, companyName, role }) =
 
 export const updateJobText = async({ userName, jobId, text }) => {
 
-    await isOwner({ userName, jobId });
+    await isJobOwner({ userName, jobId });
 
     let cleanText = leoProfanity.clean(text);
 
@@ -51,7 +51,7 @@ export const updateJobText = async({ userName, jobId, text }) => {
 }
 
 export const updateApplyLink = async({ userName, jobId, applyLink }) => {
-    await isOwner({ userName, jobId });;
+    await isJobOwner({ userName, jobId });;
 
     const job = await updateApplyLinkRepository({
         jobId,
@@ -62,7 +62,7 @@ export const updateApplyLink = async({ userName, jobId, applyLink }) => {
 }
 
 export const updateCompanyName = async({ userName, companyName, jobId }) => {
-    await isOwner({ userName, jobId });
+    await isJobOwner({ userName, jobId });
 
     const job = await updateCompanyNameRepository({
         jobId,
@@ -73,7 +73,7 @@ export const updateCompanyName = async({ userName, companyName, jobId }) => {
 }
 
 export const deleteApplyLink = async({ userName, jobId }) => {
-    await isOwner({ userName, jobId });
+    await isJobOwner({ userName, jobId });
 
     const job = await updateApplyLinkRepository({
         jobId,
@@ -84,7 +84,7 @@ export const deleteApplyLink = async({ userName, jobId }) => {
 }
 
 export const deleteCompanyName = async({ userName, jobId }) => {
-    await isOwner({ userName, jobId });
+    await isJobOwner({ userName, jobId });
 
     const job = await updateCompanyNameRepository({
         jobId,
@@ -95,7 +95,7 @@ export const deleteCompanyName = async({ userName, jobId }) => {
 }
 
 export const updateRole = async({ userName, jobId, role }) => {
-    await isOwner({ userName, jobId });
+    await isJobOwner({ userName, jobId });
 
     const job = updateRoleRespository({
         jobId,
@@ -132,7 +132,7 @@ export const getJobs = async({ page }) => {
 }
 
 export const deleteJob = async({ userName, jobId }) => {
-    await isOwner({ userName, jobId });
+    await isJobOwner({ userName, jobId });
 
     const job = await deleteJobRepository({
         jobId

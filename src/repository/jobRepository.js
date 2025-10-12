@@ -73,7 +73,7 @@ export const deleteJob = async({ jobId }) => {
     return job;
 }
 
-export const isOwner = async({ jobId, userName }) => {
+export const isJobOwner = async({ jobId, userName }) => {
     const oldJob = await getJob({ jobId });
     
     if(!oldJob) throw { message: "invalid job id", status: 400 };

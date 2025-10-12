@@ -16,7 +16,7 @@ export const accessTokenValidator = async(req, res, next) => {
 
     jwt.verify(accessToken, ACCESS_SECRET_KEY, (err, decoded) => {
         if(err) {
-            return res.status(403).json({
+            return res.status(401).json({
                 message: 'Invalid or expired access token',
                 success: false
             });
@@ -25,7 +25,7 @@ export const accessTokenValidator = async(req, res, next) => {
 
         const user = getMe({ userName });
         if(!user) {
-            return res.status(403).json({
+            return res.status(401).json({
                 message: "Invalid user",
                 success: false
             });
