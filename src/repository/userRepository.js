@@ -2,8 +2,6 @@ import { User } from '../schema/userSchema.js';
 
 export const getMe = async({ userName }) => {
     const user = await User.findOne({ userName });
-    
-    if(!user) throw { message: "User not found", status: 400 };
 
     return user;
 }

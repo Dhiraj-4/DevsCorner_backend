@@ -4,6 +4,9 @@ import apiRouter from './routes/apiRoutes.js';
 import { connectDb, FRONTEND_URL, PORT } from './config/serverConfig.js';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import { createServer } from "http";
+import { Server } from 'socket.io';
+import registerSocketHandlers from './socket/index.js';
 
 const app = express();
 
@@ -25,8 +28,19 @@ app.get('/health', (req, res) => {
 
 app.use('/api', apiRouter);
 
+const server = createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: FRONTEND_URL,
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
+
+registerSocketHandlers(io);
+
 try {
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
     connectDb();
     console.log(`Server is up on ${PORT}`);
     });
