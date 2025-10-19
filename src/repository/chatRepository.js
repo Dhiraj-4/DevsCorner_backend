@@ -4,7 +4,8 @@ import { Message } from "../schema/messageSchema.js";
 export const findConversation = async({ userId, receiverId }) => {
   const conversation = await Conversation.findOne({
     participants: { $all: [ userId, receiverId ]}
-  });
+  })
+  .populate("participants","userName profileImage fullName");
 
   return conversation;
 }
@@ -12,7 +13,8 @@ export const findConversation = async({ userId, receiverId }) => {
 export const createConversation = async({ userId, receiverId }) => {
   const conversation = await Conversation.create({
     participants: [ userId, receiverId ]
-  });
+  })
+  .populate("participants","userName profileImage fullName");
 
   return conversation;
 }
@@ -20,7 +22,7 @@ export const getConversations = async ({ userId }) => {
   const conversations = await Conversation.find({
     participants: { $in: [userId] },
   })
-    .populate("participants", "userName profileImage") // optional: populate user data
+    .populate("participants", "userName profileImage fullName") // optional: populate user data
     .sort({ updatedAt: -1 }); // latest chat on top
 
   return conversations;

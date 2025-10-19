@@ -21,6 +21,39 @@ const jobSchema = new mongoose.Schema(
       maxlength: 500,
     },
 
+    brandImage: {
+      type: String,
+      default: "",
+    },
+
+    experience: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 50
+    },
+
+    location: {
+      type: String,
+      required: true,
+      minLength: 2,
+      maxLength: 80
+    },
+
+    locationType: {
+      type: String,
+      required: true,
+      default: "",
+      minLength: 6,
+      maxLength: 10
+    },
+
+    salary: {
+      type: String,
+      default: "Not disclosed",
+      maxLength: 50
+    },
+
     applyLink: {
       type: String,
       default: "",

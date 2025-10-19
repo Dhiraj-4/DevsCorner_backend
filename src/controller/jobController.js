@@ -9,7 +9,11 @@ import {
     deleteJob as deleteJobService,
     updateRole as updateRoleService,
     getOwnersJobs as getOwnersJobsService,
-    getJobs as getJobsService
+    getJobs as getJobsService,
+    updateLocation as updateLocationService,
+    updateLocationType as updateLocationTypeService,
+    updateSalary as updateSalaryService,
+    udpateExperience as udpateExperienceService
 } from "../service/jobService.js";
 
 export const jobPost = async(req, res) => {
@@ -19,7 +23,11 @@ export const jobPost = async(req, res) => {
             text: req.body.text,
             applyLink: req.body?.applyLink,
             companyName: req.body?.companyName,
-            role: req.body.role
+            role: req.body.role,
+            location: req.body.location,
+            locationType: req.body.locationType,
+            experience: req.body.experience,
+            salary: req.body.salary
         });
 
         return successResponse({
@@ -43,6 +51,82 @@ export const updateJobText = async(req, res) => {
 
         return successResponse({
             message: "job text changed",
+            status: 200,
+            res: res,
+            info: job
+        });
+    } catch (error) {
+        return errorResponse({ error, res });
+    }
+}
+
+export const updateLocation = async(req, res) => {
+    try {
+        const job = await updateLocationService({
+            jobId: req.body.jobId,
+            userName: req.user.userName,
+            location: req.body.location
+        });
+
+        return successResponse({
+            message: "job location changed",
+            status: 200,
+            res: res,
+            info: job
+        });
+    } catch (error) {
+        return errorResponse({ error, res });
+    }
+}
+
+export const updateLocationType = async(req, res) => {
+    try {
+        const job = await updateLocationTypeService({
+            jobId: req.body.jobId,
+            userName: req.user.userName,
+            locationType: req.body.locationType
+        });
+
+        return successResponse({
+            message: "job location type changed",
+            status: 200,
+            res: res,
+            info: job
+        });
+    } catch (error) {
+        return errorResponse({ error, res });
+    }
+}
+
+export const updateSalary = async(req, res) => {
+    try {
+        const job = await updateSalaryService({
+            userName: req.user.userName,
+            jobId: req.body.jobId,
+            salary: req.body.salary
+        });
+
+        return successResponse({
+            message: "job salary changed",
+            status: 200,
+            res: res,
+            info: job
+        });
+    } catch (error) {
+        return errorResponse({ error, res });
+    }
+}
+
+export const udpateExperience = async(req, res) => {
+    try {
+        const job = await udpateExperienceService({
+            userName: req.user.userName,
+            jobId: req.body.jobId,
+            experience: req.body.experience
+        });
+
+        return successResponse({
+            message: "job experience changed",
             status: 200,
             res: res,
             info: job

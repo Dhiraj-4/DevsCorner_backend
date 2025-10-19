@@ -8,12 +8,23 @@ import {
     deleteJob as deleteJobRepository,
     updateRole as updateRoleRespository,
     getOwnersJobs as getOwnersJobsRepository,
-    getJobs as getJobsRepository
+    getJobs as getJobsRepository,
+    updateLocation as updateLocationRepository,
+    updateLocationType as updateLocationTypeRepository,
+    updateSalary as updateSalaryRepository,
+    udpateExperience as udpateExperienceRepository
 } from "../repository/jobRepository.js"
+import { verifyLocation } from "../utils/isValidLocation.js";
 
-export const jobPost = async({ userName, text, applyLink, companyName, role }) => {
+export const jobPost = async({ userName, text, applyLink, companyName, role, location, locationType, salary, experience}) => {
     const createPost = {};
+    
+    if(!(await verifyLocation(location))) throw { status: 400, message: "invalid location" };
 
+    if((locationType.toLowerCase() !== "hybrid") && (locationType.toLowerCase() !== "remote") && (locationType.toLowerCase() !== "fulltime")) {
+        throw { status: 400, message: "Invalid location type" }
+    }
+    
     if(applyLink) createPost.applyLink = applyLink;
     else createPost.applyLink = "";
 
@@ -30,7 +41,11 @@ export const jobPost = async({ userName, text, applyLink, companyName, role }) =
         userName,
         text: cleanText,
         applyLink: createPost.applyLink,
-        companyName: createPost.companyName
+        companyName: createPost.companyName,
+        location,
+        locationType,
+        salary,
+        experience
     });
 
     return job;
@@ -45,6 +60,59 @@ export const updateJobText = async({ userName, jobId, text }) => {
     const job = await updateJobTextRepository({
         text: cleanText,
         jobId
+    });
+
+    return job;
+}
+
+export const updateLocation = async({ userName, jobId, location }) => {
+    await isJobOwner({ userName, jobId });
+
+    if(!(await verifyLocation(location))) throw { status: 400, message: "Invalid location" };
+
+    const job = await updateLocationRepository({
+        jobId,
+        location
+    });
+
+    return job;
+}
+
+export const updateLocationType = async({ userName, jobId, locationType }) => {
+    await isJobOwner({ userName, jobId });
+
+    if( (locationType.toLowerCase() !== "hybrid") &&
+        (locationType.toLowerCase() !== "remote") &&
+        (locationType.toLowerCase() !== "fulltime")
+    ) {
+        throw { status: 400, message: "Invalid location type" }
+    }
+
+    const job = await updateLocationTypeRepository({
+        jobId,
+        locationType
+    });
+
+    return job;
+}
+
+export const updateSalary = async({ userName, jobId, salary }) => {
+    await isJobOwner({ userName, jobId });
+
+    const job = await updateSalaryRepository({
+        jobId,
+        salary
+    });
+
+    return job;
+}
+
+export const udpateExperience = async({ userName, jobId, experience }) => {
+    await isJobOwner({ userName, jobId });
+
+    const job = await udpateExperienceRepository({
+        jobId,
+        experience
     });
 
     return job;

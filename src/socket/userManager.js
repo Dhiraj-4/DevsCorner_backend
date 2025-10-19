@@ -1,4 +1,4 @@
-const users = new Map(); // userId -> socketId
+export const users = new Map(); // userId -> socketId
 
 export function addUser(userId, socketId) {
   users.set(userId.toString(), socketId);
@@ -11,4 +11,8 @@ export function removeUser(userId) {
 
 export function getUserSocket(userId) {
   return users.get(userId?.toString());
+}
+
+export function getUserNumber() {
+  return users.size;
 }

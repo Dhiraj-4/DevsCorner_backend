@@ -2,7 +2,12 @@ import express from "express";
 import { accessTokenValidator } from "../../validators/authValidators/accessTokenValidator.js";
 import { jobValidator } from "../../validators/jobValidators/jobValidator.js";
 import { jobZodSchema } from "../../validators/jobValidators/jobZodSchema.js";
-import { deleteApplyLink, deleteCompanyName, deleteJob, getJobs, getOwnersJobs, jobPost, updateApplyLink, updateCompanyName, updateJobText, updateRole } from "../../controller/jobController.js";
+import { 
+    deleteApplyLink, deleteCompanyName, deleteJob, getJobs, 
+    getOwnersJobs, jobPost, udpateExperience, updateApplyLink, updateCompanyName, 
+    updateJobText, updateLocation, updateLocationType, updateRole, 
+    updateSalary
+} from "../../controller/jobController.js";
 
 const router = express.Router();
 
@@ -28,6 +33,17 @@ router.delete("/delete-companyName", accessTokenValidator, jobValidator(jobZodSc
 
 router.patch("/update-role", accessTokenValidator, jobValidator(jobZodSchema("update-role")), updateRole);
 
+// update location
+router.patch("/update-location", accessTokenValidator, jobValidator(jobZodSchema("update-location")), updateLocation);
+
+// update location type
+router.patch("/update-locationType", accessTokenValidator, jobValidator(jobZodSchema("udpate-locationType")), updateLocationType);
+
+// update salary
+router.patch("/update-salary", accessTokenValidator, jobValidator(jobZodSchema("update-salary")), updateSalary);
+
+// update experience
+router.patch("/update-experience", accessTokenValidator, jobValidator(jobZodSchema("update-experience")), udpateExperience);
 
 //get jobs and my-jobs
 

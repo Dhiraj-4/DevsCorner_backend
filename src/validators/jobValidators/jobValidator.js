@@ -5,7 +5,11 @@ export const jobValidator = (schema) => {
             text: req.body?.text,
             applyLink: req.body?.applyLink,
             companyName: req.body?.companyName,
-            role: req.body?.role
+            role: req.body?.role,
+            location: req.body?.location,
+            locationType: req.body?.locationType,
+            experience: req.body?.experience,
+            salary: req.body?.salary
         }
         try {
             schema.parse(object);

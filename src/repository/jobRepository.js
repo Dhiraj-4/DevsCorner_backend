@@ -5,7 +5,7 @@ export const getJob = async({ jobId }) => {
     const job = await Job.findOne({ jobId }).populate("owner","userName");
     return job;
 }
-export const jobPost = async({ jobId, userName, applyLink, companyName, text, role }) => {
+export const jobPost = async({ jobId, userName, applyLink, companyName, text, role, location, locationType, salary, experience }) => {
     //find if jobId already exists
     const exists = await Job.findOne({ jobId });
 
@@ -21,7 +21,11 @@ export const jobPost = async({ jobId, userName, applyLink, companyName, text, ro
         owner: user._id,
         applyLink,
         companyName,
-        text
+        text,
+        location,
+        locationType,
+        salary,
+        experience
     });
 
     return post;
@@ -30,6 +34,26 @@ export const jobPost = async({ jobId, userName, applyLink, companyName, text, ro
 export const updateJobText = async({ text, jobId }) => {
     const job = await Job.findOneAndUpdate({ jobId }, { text }, { new: true });
 
+    return job;
+}
+
+export const updateLocation = async({ jobId, location }) => {
+    const job = await Job.findOneAndUpdate({ jobId }, { location }, { new: true });
+    return job;
+}
+
+export const updateLocationType = async({ jobId, locationType }) => {
+    const job = await Job.findOneAndUpdate({ jobId }, { locationType }, { new: true });
+    return job;
+}
+
+export const updateSalary = async({ jobId, salary }) => {
+    const job = await Job.findOneAndUpdate({ jobId }, { salary }, { new: true });
+    return job;
+}
+
+export const udpateExperience = async({ jobId, experience }) => {
+    const job = await Job.findOneAndUpdate({ jobId }, { experience }, { new: true });
     return job;
 }
 

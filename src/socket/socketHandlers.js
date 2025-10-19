@@ -1,7 +1,8 @@
+import { getConversations } from "../repository/chatRepository.js";
 import { Conversation } from "../schema/conversationSchema.js";
 import { Message } from "../schema/messageSchema.js";
 import { User } from "../schema/userSchema.js"
-import { addUser, getUserSocket, removeUser } from "./userManager.js";
+import { addUser, getUserNumber, getUserSocket, removeUser, users } from "./userManager.js";
 
 export const handleConnection = async(io, socket) => {
 
@@ -31,8 +32,33 @@ export const handleConnection = async(io, socket) => {
 
     //Add user in user Map();
     addUser(userId, socket.id);
+    io.emit("onlineMembers", getUserNumber());
     socket.userId = userId;
     console.log(`✅ ${user.userName} joined`);
+
+    // 1️⃣ Fetch all conversations for this user
+  const conversations = await getConversations({ userId });
+    
+  // 2️⃣ Get all peers (other participants)
+  const peers = conversations
+    .map((conv) =>
+      conv.participants.find((p) => p._id.toString() !== userId.toString())
+    )
+    .filter(Boolean)
+    .map((p) => p._id.toString());
+
+  // 3️⃣ Notify online peers that this user came online
+  peers.forEach((peerId) => {
+    const peerSocket = getUserSocket(peerId);
+    if (peerSocket) {
+      io.to(peerSocket).emit("userJoinedChat", userId);
+    }
+  });
+
+  // 4️⃣ Send list of currently-online peers to this user
+  const onlinePeers = peers.filter((peerId) => users.has(peerId));
+  socket.emit("onlineParticipants", onlinePeers);
+
 
     socket.on("sendMessage", async({ sender, receiver, text }) => {
         try {
@@ -70,6 +96,14 @@ export const handleConnection = async(io, socket) => {
 
     socket.on("disconnect", () => {
         removeUser(socket.userId);
+        io.emit("onlineMembers", getUserNumber());
+        peers.forEach((peerId) => {
+        const peerSocket = getUserSocket(peerId);
+            if (peerSocket) {
+              io.to(peerSocket).emit("userLeftChat", userId);
+            }
+        });
         console.log(`❌ User disconnected: ${socket.userId}`);
+        console.log(`❌ ${user.userName} left`);
     });
 }

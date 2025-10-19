@@ -11,7 +11,15 @@ export function jobZodSchema(filter) {
 
             applyLink: z.string().url().optional(),
 
-            companyName: z.string().min(1).max(50).optional()
+            companyName: z.string().min(1).max(50).optional(),
+
+            location: z.string().min(2).max(80),
+
+            experience: z.number().min(0).max(50).optional(),
+
+            locationType: z.string().min(5).max(10),
+
+            salary: z.string().max(50).optional()
         });
     }
     else if(filter == "update-text") {
@@ -40,6 +48,26 @@ export function jobZodSchema(filter) {
         return z.object({
             jobId: z.string().uuid()
         })
+    }else if(filter == "update-location") {
+        return z.object({
+            jobId: z.string().uuid(),
+            location: z.string().min(2).max(80)
+        });
+    }else if(filter == "udpate-locationType") {
+        return z.object({
+            jobId: z.string().uuid(),
+            locationType: z.string().min(6).max(10)
+        });
+    }else if(filter == "update-salary") {
+        return z.object({
+            jobId: z.string().uuid(),
+            salary: z.string().max(50)
+        });
+    }else if(filter == "update-experience") {
+        return z.object({
+            jobId: z.string().uuid(),
+            experience: z.number().min(0).max(50)
+        });
     }
     else {
         throw new Error("Invalid filter type")

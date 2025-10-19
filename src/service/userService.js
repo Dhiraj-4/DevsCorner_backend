@@ -13,7 +13,7 @@ import {
     deleteLocation as deleteLocationRepository
 } from '../repository/userRepository.js';
 import leoProfanity from 'leo-profanity';
-import { isValidLocation } from '../utils/isValidLocation.js';
+import { verifyLocation } from '../utils/isValidLocation.js';
 import { s3 } from '../config/awsConfig.js';
 import { AWS_BUCKET_NAME, AWS_REGION } from '../config/serverConfig.js';
 
@@ -97,8 +97,6 @@ export const uploadProfileImage = async({ fileUrl, userName }) => {
 }
 
 export const generateResumeUploadUrl = async({ fileName, fileType, userName }) => {
- const user = await getMeRepository({ userName });
-
  
   // 1. Create a new pre-signed upload URL
   const key = `resume/${userName}-${Date.now()}-${fileName}`;
@@ -244,7 +242,7 @@ export const deleteSkill = async({ userName, skill }) => {
 
 export const uploadLocation = async({ userName, location }) => {
 
-  if(!isValidLocation(location)) throw { message: "invalid location", status: 400 };
+  if(!(await verifyLocation(location))) throw { message: "invalid location", status: 400 };
 
   await uploadLocationRepository({ userName, location });
 }
