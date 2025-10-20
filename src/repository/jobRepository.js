@@ -87,6 +87,7 @@ export const getOwnersJobs = async ({ userName, limit, skip }) => {
     if (!user) return [];
 
     const jobs = await Job.find({ owner: user._id })
+                          .sort({ updatedAt: -1 })
                           .skip(skip)
                           .limit(limit)
                           .populate("owner", "fullName userName profileImage");
@@ -96,6 +97,7 @@ export const getOwnersJobs = async ({ userName, limit, skip }) => {
 
 export const getJobs = async({ limit, skip }) => {
     const jobs = await Job.find()
+                            .sort({ updatedAt: -1 })
                             .skip(skip)
                             .limit(limit)
                             .populate("owner", "fullName userName profileImage");

@@ -45,6 +45,7 @@ export const getMessages = async ({ conversationId, userId, skip, limit }) => {
 
   // Fetch messages — newest first
   const messages = await Message.find({ conversationId })
+    .sort({ updatedAt: -1 })
     .skip(skip)
     .limit(limit);
 
