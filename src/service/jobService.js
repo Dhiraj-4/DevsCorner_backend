@@ -1,4 +1,4 @@
-import { isJobOwner, jobPost as jobPostRepository } from "../repository/jobRepository.js";
+import { getJob, isJobOwner, jobPost as jobPostRepository } from "../repository/jobRepository.js";
 import { v4 as uuidv4 } from "uuid";
 import leoProfanity from 'leo-profanity';
 import {
@@ -12,9 +12,13 @@ import {
     updateLocation as updateLocationRepository,
     updateLocationType as updateLocationTypeRepository,
     updateSalary as updateSalaryRepository,
-    udpateExperience as udpateExperienceRepository
+    udpateExperience as udpateExperienceRepository,
+    uploadBrandImage as uploadBrandImageRepository,
+    deleteBrandImage as deleteBrandImageRepository
 } from "../repository/jobRepository.js"
 import { verifyLocation } from "../utils/isValidLocation.js";
+import { AWS_BUCKET_NAME, AWS_REGION } from "../config/serverConfig.js";
+import { s3 } from "../config/awsConfig.js";
 
 export const jobPost = async({ userName, text, applyLink, companyName, role, location, locationType, salary, experience}) => {
     const createPost = {};
@@ -116,6 +120,89 @@ export const udpateExperience = async({ userName, jobId, experience }) => {
     });
 
     return job;
+}
+
+export const generateBrandImageUploadUrl = async ({ fileName, fileType, jobId, userName }) => {
+  await isJobOwner({ userName, jobId });
+
+  const job = await getJob({ jobId });
+
+  // 1. Delete old brand image if it exists
+  if (job.brandImage) {
+    try {
+      const oldKey = job.brandImage.replace(
+        `https://${AWS_BUCKET_NAME}.s3.${AWS_REGION}.amazonaws.com/`,
+        ""
+      );
+
+      await s3.deleteObject({
+        Bucket: AWS_BUCKET_NAME,
+        Key: oldKey,
+      }).promise();
+
+      console.log(`🗑 Deleted old brand image: ${oldKey}`);
+    } catch (err) {
+      console.error("Failed to delete old brand image:", err);
+    }
+  }
+
+  // 2. Create a new pre-signed upload URL
+  const key = `brand-images/${jobId}-${Date.now()}-${fileName}`;
+
+  const s3Params = {
+    Bucket: AWS_BUCKET_NAME,
+    Key: key,
+    Expires: 60, // valid for 60 seconds
+    ContentType: fileType
+  };
+
+  const uploadUrl = await s3.getSignedUrlPromise("putObject", s3Params);
+  const fileUrl = `https://${AWS_BUCKET_NAME}.s3.${AWS_REGION}.amazonaws.com/${key}`;
+
+  // 3. Return pre-signed upload URL and file URL
+  return { uploadUrl, fileUrl };
+};
+
+export const uploadBrandImage = async({ fileUrl, userName, jobId }) => {
+  await isJobOwner({ userName, jobId });
+
+  if(fileUrl) {
+    const job = await uploadBrandImageRepository({ fileUrl, jobId });
+    return job;
+  } else {
+    throw {
+      message: 'fileUrl missing',
+      status: 400
+    }
+  }
+}
+
+export const deleteBrandImage = async({ jobId, userName }) => {
+    await isJobOwner({ userName, jobId });
+
+    const oldJob = await getJob({ jobId });
+
+  if (oldJob.brandImage) {
+    try {
+      const oldKey = oldJob.brandImage.replace(
+        `https://${AWS_BUCKET_NAME}.s3.${AWS_REGION}.amazonaws.com/`,
+        ""
+      );
+
+      await s3.deleteObject({
+        Bucket: AWS_BUCKET_NAME,
+        Key: oldKey,
+      }).promise();
+
+      console.log(`🗑 Deleted old brand image: ${oldKey}`);
+    } catch (err) {
+      console.error("Failed to delete old brand image:", err);
+    }
+  }
+
+  const job = await deleteBrandImageRepository({ jobId });
+
+  return job;
 }
 
 export const updateApplyLink = async({ userName, jobId, applyLink }) => {

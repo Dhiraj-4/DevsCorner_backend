@@ -68,6 +68,17 @@ export function jobZodSchema(filter) {
             jobId: z.string().uuid(),
             experience: z.number().min(0).max(50)
         });
+    }else if(filter == "generate-upload-url") {
+        return z.object({
+            jobId: z.string().uuid(),
+            fileType: z.string(),
+            fileName: z.string()
+        });
+    }else if(filter == "upload-brand-image") {
+        return z.object({
+            jobId: z.string().uuid(),
+            fileUrl: z.string()
+        });
     }
     else {
         throw new Error("Invalid filter type")

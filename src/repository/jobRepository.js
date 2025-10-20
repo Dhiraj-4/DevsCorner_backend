@@ -57,6 +57,16 @@ export const udpateExperience = async({ jobId, experience }) => {
     return job;
 }
 
+export const uploadBrandImage = async({ fileUrl, jobId }) => {
+    const job = await Job.findOneAndUpdate({ jobId }, { brandImage: fileUrl }, { new: true });
+    return job;
+}
+
+export const deleteBrandImage = async({ jobId }) => {
+    const job = await Job.findOneAndUpdate({ jobId }, { brandImage: "" }, { new: true });
+    return job;
+}
+
 export const updateApplyLink = async({ applyLink, jobId }) => {
     const job = await Job.findOneAndUpdate({ jobId }, { applyLink }, { new: true });
     return job;

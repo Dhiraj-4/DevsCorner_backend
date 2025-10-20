@@ -9,7 +9,10 @@ export const jobValidator = (schema) => {
             location: req.body?.location,
             locationType: req.body?.locationType,
             experience: req.body?.experience,
-            salary: req.body?.salary
+            salary: req.body?.salary,
+            fileName: req.body?.fileName,
+            fileType: req.body?.fileType,
+            fileUrl: req.body?.fileUrl
         }
         try {
             schema.parse(object);

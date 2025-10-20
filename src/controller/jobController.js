@@ -13,7 +13,10 @@ import {
     updateLocation as updateLocationService,
     updateLocationType as updateLocationTypeService,
     updateSalary as updateSalaryService,
-    udpateExperience as udpateExperienceService
+    udpateExperience as udpateExperienceService,
+    generateBrandImageUploadUrl as generateBrandImageUploadUrlService,
+    uploadBrandImage as uploadBrandImageService,
+    deleteBrandImage as deleteBrandImageService
 } from "../service/jobService.js";
 
 export const jobPost = async(req, res) => {
@@ -127,6 +130,63 @@ export const udpateExperience = async(req, res) => {
 
         return successResponse({
             message: "job experience changed",
+            status: 200,
+            res: res,
+            info: job
+        });
+    } catch (error) {
+        return errorResponse({ error, res });
+    }
+}
+
+export const generateBrandImageUploadUrl = async(req, res) => {
+    try {
+        const preSignedUrl = await generateBrandImageUploadUrlService({
+            fileName: req.body.fileName,
+            fileType: req.body.fileType,
+            jobId: req.body.jobId,
+            userName: req.user.userName
+        });
+
+        return successResponse({
+            message: "got pre signed url",
+            status: 200,
+            res: res,
+            info: preSignedUrl
+        });
+    } catch (error) {
+        return errorResponse({ error, res });
+    }
+}
+
+export const uploadBrandImage = async(req, res) => {
+    try {
+        const job = await uploadBrandImageService({
+            fileUrl: req.body.fileUrl,
+            userName: req.user.userName,
+            jobId: req.body.jobId
+        });
+
+        return successResponse({
+            message: "uploaded brand image",
+            status: 200,
+            res: res,
+            info: job
+        });
+    } catch (error) {
+        return errorResponse({ error, res });
+    }
+}
+
+export const deleteBrandImage = async(req, res) => {
+    try {
+        const job = await deleteBrandImageService({
+            jobId: req.body.jobId,
+            userName: req.user.userName
+        });
+
+        return successResponse({
+            message: "deleted brand image",
             status: 200,
             res: res,
             info: job

@@ -9,6 +9,11 @@ export const handleConnection = async(io, socket) => {
     console.log(`⚡ Socket connected: ${socket.id}`);
     const { userId } = socket.handshake.query;
     
+    if(!userId) {
+      socket.emit("authError", { message: "Invalid user" });
+      return socket.disconnect(true);
+    }
+
     const user = await User.findById(userId).select("userName");
 
     //if user not found in DB

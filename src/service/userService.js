@@ -73,7 +73,7 @@ export const generateUploadUrl = async ({ fileName, fileType, userName }) => {
     Bucket: AWS_BUCKET_NAME,
     Key: key,
     Expires: 60, // valid for 60 seconds
-    ContentType: fileType,
+    ContentType: fileType
   };
 
   const uploadUrl = await s3.getSignedUrlPromise("putObject", s3Params);

@@ -3,10 +3,11 @@ import { accessTokenValidator } from "../../validators/authValidators/accessToke
 import { jobValidator } from "../../validators/jobValidators/jobValidator.js";
 import { jobZodSchema } from "../../validators/jobValidators/jobZodSchema.js";
 import { 
-    deleteApplyLink, deleteCompanyName, deleteJob, getJobs, 
+    deleteApplyLink, deleteBrandImage, deleteCompanyName, deleteJob, generateBrandImageUploadUrl, getJobs, 
     getOwnersJobs, jobPost, udpateExperience, updateApplyLink, updateCompanyName, 
     updateJobText, updateLocation, updateLocationType, updateRole, 
-    updateSalary
+    updateSalary,
+    uploadBrandImage
 } from "../../controller/jobController.js";
 
 const router = express.Router();
@@ -44,6 +45,15 @@ router.patch("/update-salary", accessTokenValidator, jobValidator(jobZodSchema("
 
 // update experience
 router.patch("/update-experience", accessTokenValidator, jobValidator(jobZodSchema("update-experience")), udpateExperience);
+
+// get pre signed url
+router.post("/genarate-brand-image-upload-url", accessTokenValidator, jobValidator(jobZodSchema("generate-upload-url")), generateBrandImageUploadUrl);
+
+// upload brand image
+router.patch("/upload-brandImage", accessTokenValidator, jobValidator(jobZodSchema("upload-brand-image")), uploadBrandImage);
+
+// delete brand image
+router.patch("/delete-brandImage", accessTokenValidator, jobValidator(jobZodSchema("delete")), deleteBrandImage);
 
 //get jobs and my-jobs
 
