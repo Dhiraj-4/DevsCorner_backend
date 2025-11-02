@@ -20,7 +20,7 @@ app.use(cors({
 
 app.use(morgan('combined'));
 app.use(express.json());
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
 app.get('/health', (req, res) => {
     res.status(200).json({ status: 'ok'})

@@ -67,22 +67,24 @@ export const handleConnection = async(io, socket) => {
 
     socket.on("sendMessage", async({ sender, receiver, text }) => {
         try {
-            console.log(text,sender, receiver, `message received`);
-            
-            let conversation = (
-                // In message creation
-                await Conversation.findOneAndUpdate(
-                  { participants: { $all: [sender, receiver] } },
-                  { new: true, upsert: true }
-                )) ||
-                (await Conversation.create({ participants: [sender, receiver] }));
+          console.log(text,sender, receiver, `message received`);
 
+          let conversation = (
+            // In message creation
+            await Conversation.findOneAndUpdate(
+              { participants: { $all: [sender, receiver] } },
+              { new: true, upsert: true }
+            )) ||
+            (await Conversation.create({ participants: [sender, receiver] }));
+            
             const message = await Message.create({
-                conversationId: conversation._id,
-                sender,
-                receiver,
-                text,
+              conversationId: conversation._id,
+              sender,
+              receiver,
+              text,
             });
+            
+            socket.emit("messageDeliverd", message);
 
             const receiverSocketId = getUserSocket(receiver);
             if (receiverSocketId) {

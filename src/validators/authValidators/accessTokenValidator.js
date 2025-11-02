@@ -14,23 +14,16 @@ export const accessTokenValidator = async(req, res, next) => {
     }
     const accessToken = authHeader.split(' ')[1];
 
-    jwt.verify(accessToken, ACCESS_SECRET_KEY, (err, decoded) => {
-        if(err) {
-            return res.status(401).json({
-                message: 'Invalid or expired access token',
-                success: false
-            });
-        }
+    try {
+        const decoded = jwt.verify(accessToken, ACCESS_SECRET_KEY);
         const { userName } = decoded;
-
-        const user = getMe({ userName });
-        if(!user) {
-            return res.status(401).json({
-                message: "Invalid user",
-                success: false
-            });
+        const user = await getMe({ userName });
+        if (!user) {
+            return res.status(401).json({ message: "Invalid user", success: false });
         }
         req.user = decoded;
         next();
-    })
+    } catch (err) {
+        return res.status(401).json({ message: 'Invalid or expired access token', success: false });
+    }
 }

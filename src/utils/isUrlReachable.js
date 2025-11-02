@@ -1,3 +1,5 @@
+import axios from "axios";
+
 export const isUrlReachable = async (url) => {
   try {
     const res = await axios.get(url, { method: "GET", timeout: 5000 });
