@@ -8,11 +8,17 @@ export const authValidator = (schema) => {
             identifier: req.body?.identifier
         }
         try {
+            console.log(object);
+            
             schema.parse(object);
             console.log("✅ Validation passed");
             next();
         } catch (error) {
-            console.log("❌ Validation failed:", error);
+            try {
+                console.log("❌ Validation failed:", error);
+            }catch(err) {
+                console.log("❌ Validation failed:", error.errors);
+            }
             res.status(400).json({
                 message: 'Validation failed',
                 success: false,
