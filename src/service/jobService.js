@@ -16,14 +16,14 @@ import {
     uploadBrandImage as uploadBrandImageRepository,
     deleteBrandImage as deleteBrandImageRepository
 } from "../repository/jobRepository.js"
-import { verifyLocation } from "../utils/isValidLocation.js";
+import { parseLocation } from "../utils/isValidLocation.js";
 import { AWS_BUCKET_NAME, AWS_REGION } from "../config/serverConfig.js";
 import { s3 } from "../config/awsConfig.js";
 
 export const jobPost = async({ userName, text, applyLink, companyName, role, location, locationType, salary, experience}) => {
     const createPost = {};
     
-    if(!(await verifyLocation(location))) throw { status: 400, message: "invalid location" };
+    if(!parseLocation(location)) throw { status: 400, message: "invalid location" };
 
     if((locationType.toLowerCase() !== "hybrid") && (locationType.toLowerCase() !== "remote") && (locationType.toLowerCase() !== "fulltime")) {
         throw { status: 400, message: "Invalid location type" }
@@ -72,7 +72,7 @@ export const updateJobText = async({ userName, jobId, text }) => {
 export const updateLocation = async({ userName, jobId, location }) => {
     await isJobOwner({ userName, jobId });
 
-    if(!(await verifyLocation(location))) throw { status: 400, message: "Invalid location" };
+    if(!parseLocation(location)) throw { status: 400, message: "Invalid location" };
 
     const job = await updateLocationRepository({
         jobId,
@@ -94,7 +94,7 @@ export const updateLocationType = async({ userName, jobId, locationType }) => {
 
     const job = await updateLocationTypeRepository({
         jobId,
-        locationType
+        locationType: locationType.toLowerCase().trim()
     });
 
     return job;

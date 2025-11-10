@@ -19,7 +19,11 @@ export const jobValidator = (schema) => {
             console.log("✅ Validation passed");
             next();
         } catch (error) {
-            console.log("❌ Validation failed:", error);
+            try {
+                console.log("❌ Validation failed:", error);
+            } catch (error) {
+                console.log("❌ Validation failed", error.errors);
+            }
             res.status(400).json({
                 message: 'Validation failed',
                 success: false,

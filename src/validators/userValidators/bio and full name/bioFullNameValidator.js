@@ -9,7 +9,11 @@ export const bioFullNameValidator = (schema) => {
             console.log("✅ Validation passed");
             next();
         } catch (error) {
-            console.log("❌ Validation failed:", error);
+            try {
+                console.log("❌ Validation failed:", error);
+            } catch (error) {
+                console.error("Error logging validation failure:", error.errors);
+            }
             res.status(400).json({
                 message: 'Validation failed',
                 success: false,

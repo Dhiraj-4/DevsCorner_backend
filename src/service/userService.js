@@ -13,7 +13,7 @@ import {
     deleteLocation as deleteLocationRepository
 } from '../repository/userRepository.js';
 import leoProfanity from 'leo-profanity';
-import { verifyLocation } from '../utils/isValidLocation.js';
+import { parseLocation } from '../utils/isValidLocation.js';
 import { s3 } from '../config/awsConfig.js';
 import { AWS_BUCKET_NAME, AWS_REGION } from '../config/serverConfig.js';
 
@@ -242,7 +242,7 @@ export const deleteSkill = async({ userName, skill }) => {
 
 export const uploadLocation = async({ userName, location }) => {
 
-  if(!(await verifyLocation(location))) throw { message: "invalid location", status: 400 };
+  if(!parseLocation(location)) throw { message: "invalid location", status: 400 };
 
   await uploadLocationRepository({ userName, location });
 }
