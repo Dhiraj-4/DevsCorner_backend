@@ -101,6 +101,20 @@ export const handleConnection = async(io, socket) => {
         }
     });
 
+    socket.on("logout", () => {
+        removeUser(socket.userId);
+        io.emit("onlineMembers", getUserNumber());
+        peers.forEach((peerId) => {
+        const peerSocket = getUserSocket(peerId);
+            if (peerSocket) {
+              io.to(peerSocket).emit("userLeftChat", userId);
+            }
+        });
+        console.log(`❌ User logged out: ${socket.userId}`);
+        console.log(`❌ ${user.userName} logged out`);
+        socket.disconnect(true);
+    });
+
     socket.on("disconnect", () => {
         removeUser(socket.userId);
         io.emit("onlineMembers", getUserNumber());
