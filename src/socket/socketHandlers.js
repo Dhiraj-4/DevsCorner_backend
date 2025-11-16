@@ -1,14 +1,27 @@
+import jwt from "jsonwebtoken";
 import { getConversations } from "../repository/chatRepository.js";
 import { Conversation } from "../schema/conversationSchema.js";
 import { Message } from "../schema/messageSchema.js";
 import { User } from "../schema/userSchema.js"
 import { addUser, getUserNumber, getUserSocket, removeUser, users } from "./userManager.js";
+import { ACCESS_SECRET_KEY } from "../config/serverConfig.js";
+import { socketEvents } from "./index.js";
 
 export const handleConnection = async(io, socket) => {
 
     console.log(`⚡ Socket connected: ${socket.id}`);
-    const { userId } = socket.handshake.query;
+    const { userId, accessToken } = socket.handshake.query;
+
+    jwt.verify(accessToken, ACCESS_SECRET_KEY, (err, decoded) => {
+      if (err) {
+        console.log("❌ Invalid token, disconnecting socket");
+        return socket.disconnect(true);
+      }
     
+      console.log("✅ Token verified for:", decoded.userName);
+    });
+
+
     if(!userId) {
       socket.emit("authError", { message: "Invalid user" });
       return socket.disconnect(true);
@@ -127,4 +140,11 @@ export const handleConnection = async(io, socket) => {
         console.log(`❌ User disconnected: ${socket.userId}`);
         console.log(`❌ ${user.userName} left`);
     });
+}
+
+export async function notify(notification, payload) {
+  if(notification == "job") {
+    socketEvents.jobCreated(payload);
+  }
+  
 }

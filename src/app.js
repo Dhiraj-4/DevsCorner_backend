@@ -29,7 +29,7 @@ app.get('/health', (req, res) => {
 app.use('/api', apiRouter);
 
 const server = createServer(app);
-const io = new Server(server, {
+export const io = new Server(server, {
   cors: {
     origin: FRONTEND_URL,
     methods: ["GET", "POST"],

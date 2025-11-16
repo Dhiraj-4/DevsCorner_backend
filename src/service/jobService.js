@@ -19,6 +19,7 @@ import {
 import { parseLocation } from "../utils/isValidLocation.js";
 import { AWS_BUCKET_NAME, AWS_REGION } from "../config/serverConfig.js";
 import { s3 } from "../config/awsConfig.js";
+import { notify } from "../socket/socketHandlers.js";
 
 export const jobPost = async({ userName, text, applyLink, companyName, role, location, locationType, salary, experience}) => {
     const createPost = {};
@@ -51,6 +52,8 @@ export const jobPost = async({ userName, text, applyLink, companyName, role, loc
         salary,
         experience
     });
+
+    await notify("job", job);
 
     return job;
 }
