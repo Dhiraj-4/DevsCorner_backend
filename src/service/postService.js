@@ -9,6 +9,7 @@ import {
     getOwnersPosts as getOwnersPostsRepository,
     getPosts as getPostsRepository
 } from "../repository/postRepository.js";
+import { notify } from "../socket/socketHandlers.js";
 
 export const createPost = async({ userName, text }) => {
     const user = await getMeRepository({ userName });
@@ -22,6 +23,9 @@ export const createPost = async({ userName, text }) => {
         postId
     });
 
+    post.from = userName;
+    await notify("post", post);
+    
     return post;
 }
 

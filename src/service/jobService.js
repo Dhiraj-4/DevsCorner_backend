@@ -53,6 +53,7 @@ export const jobPost = async({ userName, text, applyLink, companyName, role, loc
         experience
     });
 
+    job.from = userName;
     await notify("job", job);
 
     return job;

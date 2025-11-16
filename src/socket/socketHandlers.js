@@ -1,11 +1,12 @@
+import { Notification } from "../schema/notificationSchema.js";
+import { io } from "../app.js";
+import { User } from "../schema/userSchema.js";
 import jwt from "jsonwebtoken";
 import { getConversations } from "../repository/chatRepository.js";
 import { Conversation } from "../schema/conversationSchema.js";
 import { Message } from "../schema/messageSchema.js";
-import { User } from "../schema/userSchema.js"
 import { addUser, getUserNumber, getUserSocket, removeUser, users } from "./userManager.js";
 import { ACCESS_SECRET_KEY } from "../config/serverConfig.js";
-import { socketEvents } from "./index.js";
 
 export const handleConnection = async(io, socket) => {
 
@@ -46,6 +47,17 @@ export const handleConnection = async(io, socket) => {
       socket.emit('receiveMessage', msg);
       msg.delivered = true;
       await msg.save();
+    });
+
+    const undeliveredNotifs = await Notification.find({
+      userId,
+      delivered: false
+    });
+
+    undeliveredNotifs.forEach(async notif => {
+        socket.emit("notification:newJob", notif);
+        notif.delivered = true;
+        await notif.save();
     });
 
     //Add user in user Map();
@@ -99,6 +111,12 @@ export const handleConnection = async(io, socket) => {
             
             socket.emit("messageDeliverd", message);
 
+            await notify("message", {
+              userId: receiver,
+              from: user.userName,
+              data: message
+            });
+
             const receiverSocketId = getUserSocket(receiver);
             if (receiverSocketId) {
                 io.to(receiverSocketId).emit("receiveMessage", message);
@@ -142,9 +160,93 @@ export const handleConnection = async(io, socket) => {
     });
 }
 
-export async function notify(notification, payload) {
-  if(notification == "job") {
-    socketEvents.jobCreated(payload);
-  }
-  
+
+export async function notify(event, payload) {
+    
+    // 🔔 1️⃣ JOB NOTIFICATIONS
+    if (event === "job") {
+
+        const allUsers = await User.find({}, "_id");
+
+        for (const user of allUsers) {
+            const notif = await Notification.create({
+                userId: user._id,
+                type: "job",
+                from: payload.from,
+                data: {
+                    jobId: payload.jobId,
+                    role: payload.role,
+                    companyName: payload.companyName,
+                    location: payload.location
+                }
+            });
+
+            const socketId = getUserSocket(user._id.toString());
+
+            if (socketId) {
+                io.to(socketId).emit("notification:newJob", notif);
+
+                notif.delivered = true;
+                await notif.save();
+            }
+        }
+        return;
+    }
+
+    // 🔔 2️⃣ POST NOTIFICATIONS (followers)
+    else if (event === "post") {
+
+        const user = await User.findById(payload.owner).select("followers");
+
+        for (let follower of user.followers) {
+
+            const notif = await Notification.create({
+                userId: follower,
+                type: "post",
+                from: payload.from,
+                data: {
+                    postId: payload.postId,
+                    owner: payload.owner,
+                    text: payload.text
+                }
+            });
+
+            const socketId = getUserSocket(follower.toString());
+
+            if (socketId) {
+                io.to(socketId).emit("notification:post", notif);
+
+                notif.delivered = true;
+                await notif.save();
+            }
+        }
+        return;
+    }
+
+    // 🔔 3️⃣ MESSAGE NOTIFICATIONS
+    else if (event === "message") {
+
+        const notif = await Notification.create({
+            userId: payload.userId,
+            type: "message",
+            from: payload.from,
+            data: {
+                messageId: payload.data._id,
+                receiver: payload.data.receiver,
+                sender: payload.data.sender,
+                conversationId: payload.data.conversationId
+            }
+        });
+
+        const socketId = getUserSocket(payload.userId.toString());
+
+        if (socketId) {
+            io.to(socketId).emit("notification:message", notif);
+
+            notif.delivered = true;
+            await notif.save();
+        }
+
+        return;
+    }
 }
