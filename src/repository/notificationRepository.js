@@ -11,3 +11,19 @@ export const getUnseenNotif = async({ userName }) => {
 
     return notifications;
 }
+
+export const deleteNotif = async({ userName, id }) => {
+  const user = await getMe({ userName });
+
+  const notif = await Notification.findById(id).select("userId");
+
+  if (!notif) throw { status: 404, message: "Notification not found" };
+
+  if(notif.userId.toString() !== user._id.toString()) {
+    throw { status: 403, message: "Not authorised" };
+  }
+
+  await Notification.findByIdAndDelete(id);
+
+  return;
+}

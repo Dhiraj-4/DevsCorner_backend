@@ -36,15 +36,18 @@ export const getOwnersPosts = async ({ userName, limit, skip }) => {
     const posts = await Post.find({ owner: user._id })
                           .skip(skip)
                           .limit(limit)
-                          .populate("owner", "fullName userName profileImage");
+                          .populate("owner", "fullName userName profileImage")
+                          .sort({ updatedAt: -1 });
 
     return posts;
 };
 
-export const getPosts = async({ limit, skip }) => {
-    const posts = await Post.find()
-                            .skip(skip)
-                            .limit(limit)
-                            .populate("owner", "fullName userName profileImage");
-    return posts;
-}
+export const getPosts = async ({ limit, skip }) => {
+  const posts = await Post.find()
+    .skip(skip)
+    .limit(limit)
+    .populate("owner", "fullName userName profileImage")
+    .sort({ updatedAt: -1 });
+
+  return posts;
+};
