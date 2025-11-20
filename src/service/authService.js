@@ -20,7 +20,10 @@ export const initiateSignup = async({ email, password, fullName, userName }) => 
     const hashPassword = await bcrypt.hash(password, 12);
     const otp = generateSecureOTP();
 
-    const info = await transporter.sendMail({
+    let info = {};
+    
+    try {
+      info = await transporter.sendMail({
         from: `"DevsCorner 🚀" <${SMTP_USER}>`,
         to: email,
         subject: "🔐 Your DevsCorner OTP Code",
@@ -39,7 +42,12 @@ export const initiateSignup = async({ email, password, fullName, userName }) => 
             <p style="font-size: 12px; color: #6e7681;">DevsCorner • Built for developers, by developers</p>
           </div>
         `
-    });
+      });
+    } catch (error) {
+      throw { status: 400, message: "Unable to send otp" };
+    }
+    console.log(info);
+
     console.log("Message sent:", info.messageId);
         
     const payload = {
