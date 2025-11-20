@@ -1,12 +1,12 @@
 import nodemailer from 'nodemailer';
-import { SMTP_PASS, SMTP_USER } from './serverConfig.js';
+import { SMTP_KEY, SMTP_USER } from './serverConfig.js';
 
 export const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
+  host: "smtp-relay.brevo.com",
   port: 587,
   secure: false,
   auth: {
     user: SMTP_USER,
-    pass: SMTP_PASS,
+    pass: SMTP_KEY,
   },
 });
