@@ -13,12 +13,6 @@ export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 
 export const RESEND_API_KEY = process.env.RESEND_API_KEY;
 
-export const SMTP_USER = process.env.SMTP_USER;
-
-export const SMTP_KEY = process.env.SMTP_KEY;
-
-export const SMTP_PASS = process.env.SMTP_PASS;
-
 export const OTP_SECRET_KEY = process.env.OTP_SECRET_KEY;
 
 export const ACCESS_SECRET_KEY = process.env.ACCESS_SECRET_KEY;
@@ -28,8 +22,6 @@ export const REFRESH_SECRET_KEY = process.env.REFRESH_SECRET_KEY;
 export const PASSWORD_SECRET_KEY = process.env.PASSWORD_SECRET_KEY;
 
 export const NODE_ENV = process.env.NODE_ENV;
-
-export const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
 
 export const AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY;
 

@@ -1,4 +1,4 @@
-import { ACCESS_SECRET_KEY, OTP_SECRET_KEY, PASSWORD_SECRET_KEY, REFRESH_SECRET_KEY, SMTP_USER } from "../config/serverConfig.js";
+import { ACCESS_SECRET_KEY, OTP_SECRET_KEY, PASSWORD_SECRET_KEY, REFRESH_SECRET_KEY } from "../config/serverConfig.js";
 import { generateSecureOTP } from "../utils/otpGenerater.js";
 import { 
     initiateSignup as initiateSignupRepository,
