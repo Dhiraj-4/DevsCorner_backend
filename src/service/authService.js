@@ -10,8 +10,8 @@ import {
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
-import { transporter } from '../config/nodemailerConfig.js'
 import { User } from "../schema/userSchema.js";
+import { sendOTPEmail } from "../utils/sendEmail.js";
 
 export const initiateSignup = async({ email, password, fullName, userName }) => {
 
@@ -21,30 +21,13 @@ export const initiateSignup = async({ email, password, fullName, userName }) => 
     const otp = generateSecureOTP();
     
     try {
-      const info = await transporter.sendMail({
-        from: `"DevsCorner 🚀" <devscorner.dev@gmail.com>`,
-        to: email,
-        subject: "🔐 Your DevsCorner Sign up OTP Code",
-        text: `Your OTP code is: ${otp}`,
-        html: `
-          <div style="font-family: 'Fira Code', 'Courier New', monospace; background-color: #0d1117; color: #c9d1d9; padding: 20px; border-radius: 8px; max-width: 480px; margin: auto;">
-            <h2 style="color: #58a6ff;">🔐 DevsCorner Verification</h2>
-            <p>Hey developer,</p>
-            <p>Here is your one-time password (OTP) to proceed:</p>
-            <div style="font-size: 24px; font-weight: bold; color: #f0f6fc; background: #161b22; padding: 12px 20px; border: 1px solid #30363d; border-radius: 6px; width: fit-content;">
-              ${otp}
-            </div>
-            <p style="margin-top: 20px;">This OTP is valid for <strong>2 minutes</strong>. Do not share it with anyone.</p>
-            <hr style="margin: 30px 0; border: none; border-top: 1px solid #30363d;" />
-            <p style="font-size: 14px; color: #8b949e;">If you didn't request this, please ignore this email.</p>
-            <p style="font-size: 12px; color: #6e7681;">DevsCorner • Built for developers, by developers</p>
-          </div>
-        `
-      });
-      console.log(info);
-      console.log("Message sent:", info.messageId);
+      
+
+      const info = await sendOTPEmail(email, otp);
+
+      console.log("Message sent:", info);
     } catch (error) {
-       console.error("SMTP failed:", error);
+       console.error("Mailer failed:", error);
       throw { status: 400, message: "Unable to send otp" };
     }
 
@@ -112,29 +95,12 @@ export const forgotPassword = async({ identifier }) => {
 
 
         try {
-        const info = await transporter.sendMail({
-          from: `"DevsCorner 🚀" <devscorner.dev@gmail.com>`,
-          to: email,
-          subject: "🔐 Your DevsCorner OTP Code",
-          text: `Your OTP code is: ${otp}`,
-          html: `
-            <div style="font-family: 'Fira Code', 'Courier New', monospace; background-color: #0d1117; color: #c9d1d9; padding: 20px; border-radius: 8px; max-width: 480px; margin: auto;">
-              <h2 style="color: #58a6ff;">🔐 DevsCorner Verification</h2>
-              <p>Hey developer,</p>
-              <p>Here is your one-time password (OTP) to proceed:</p>
-              <div style="font-size: 24px; font-weight: bold; color: #f0f6fc; background: #161b22; padding: 12px 20px; border: 1px solid #30363d; border-radius: 6px; width: fit-content;">
-                ${otp}
-              </div>
-              <p style="margin-top: 20px;">This OTP is valid for <strong>2 minutes</strong>. Do not share it with anyone.</p>
-              <hr style="margin: 30px 0; border: none; border-top: 1px solid #30363d;" />
-              <p style="font-size: 14px; color: #8b949e;">If you didn't request this, please ignore this email.</p>
-              <p style="font-size: 12px; color: #6e7681;">DevsCorner • Built for developers, by developers</p>
-            </div>
-          `
-        });
-        console.log("Message sent:", info.messageId);
+
+        const info = await sendOTPEmail(email, otp);
+
+        console.log("Message sent:", info);
         } catch (error) {
-          console.error("SMTP failed:", error);
+          console.error("Mailersend failed:", error);
           throw { status: 400, message: "Unable to send otp" };
         }
 

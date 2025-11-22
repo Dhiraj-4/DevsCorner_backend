@@ -11,6 +11,8 @@ export const FRONTEND_URL = process.env.NODE_ENV === 'production'
 
 export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 
+export const RESEND_API_KEY = process.env.RESEND_API_KEY;
+
 export const SMTP_USER = process.env.SMTP_USER;
 
 export const SMTP_KEY = process.env.SMTP_KEY;
