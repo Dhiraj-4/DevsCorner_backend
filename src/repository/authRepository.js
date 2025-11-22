@@ -40,7 +40,7 @@ export const findUser = async({ identifier }) => {
         { $or: [{ email: identifier }, { userName: identifier }]}
     ).select('+password +otp +passwordResetToken');
 
-    if(!user) throw { message: 'User not found', status: 404 };
+    if(!user) throw { message: 'Invaild user name or email', status: 400 };
 
     return user;
 }

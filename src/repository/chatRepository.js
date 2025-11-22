@@ -10,14 +10,16 @@ export const findConversation = async({ userId, receiverId }) => {
   return conversation;
 }
 
-export const createConversation = async({ userId, receiverId }) => {
+export const createConversation = async ({ userId, receiverId }) => {
   const conversation = await Conversation.create({
-    participants: [ userId, receiverId ]
-  })
-  .populate("participants","userName profileImage fullName");
+    participants: [userId, receiverId],
+  });
+
+  await conversation.populate("participants", "userName profileImage fullName");
 
   return conversation;
-}
+};
+
 export const getConversations = async ({ userId }) => {
   const conversations = await Conversation.find({
     participants: { $in: [userId] },

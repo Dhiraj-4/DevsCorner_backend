@@ -62,13 +62,13 @@ export const login = async({ identifier, password }) => {
 
     const user = await loginRepository({ identifier });
 
-    if(!user) throw { message: "Invalid user", status: 404 }
+    if(!user) throw { message: "Invalid user", status: 400 }
 
     if(!user.password) throw {message: "Invalid password", status: 400}
 
     const isMatch = await bcrypt.compare(password, user.password);
 
-    if(!isMatch) throw { message: "Invalid password.", status: 401 }
+    if(!isMatch) throw { message: "Invalid password.", status: 400 }
     
     const payload = {
         userName: user.userName
@@ -129,7 +129,7 @@ export const resetPassword = async({ otp, userName }) => {
     if(user.otp.expiresAt < Date.now()) {
         user.otp = {}
         await user.save();
-        throw{ message: 'Otp expired', status: 401 };
+        throw{ message: 'Otp expired', status: 400 };
     }
 
     const isMatch = await bcrypt.compare(String(otp), user.otp.code);
@@ -162,7 +162,7 @@ export const updatePassword = async ({ passwordResetToken, userName, password })
   if (!user || !user.passwordResetToken.code) {
     throw {
       message: "User or reset token not found",
-      status: 404
+      status: 400
     };
   }
 
