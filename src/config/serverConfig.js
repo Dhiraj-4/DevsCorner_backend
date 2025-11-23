@@ -5,9 +5,14 @@ dotenv.config();
 
 export const PORT = process.env.PORT || 8080;
 
-export const FRONTEND_URL = process.env.NODE_ENV === 'production'
-  ? 'https://devscorner-frontend.onrender.com'
-  : 'http://localhost:5173';
+export const FRONTEND_URL =
+  process.env.NODE_ENV === 'production'
+    ? [
+        'https://devscorner-frontend.onrender.com',
+        'https://devscorner.in',
+        'https://www.devscorner.in'
+      ]
+    : ['http://localhost:5173'];
 
 export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 
