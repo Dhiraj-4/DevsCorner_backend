@@ -8,7 +8,11 @@ export const skillsValidator = (schema) => {
             console.log("✅ Validation passed");
             next();
         } catch (error) {
-            console.log("❌ Validation failed:", error);
+            try {
+                console.log("❌ Validation failed", error.errors);
+            } catch(error) {
+                console.log("❌ Validation failed");
+            }
             res.status(400).json({
                 message: 'Validation failed',
                 success: false,
