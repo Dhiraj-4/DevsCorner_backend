@@ -9,8 +9,6 @@ import { createServer } from "http";
 import { Server } from 'socket.io';
 import registerSocketHandlers from './socket/index.js';
 
-dns.setServers(["1.1.1.1", "8.8.8.8"]);
-
 const app = express();
 
 app.use(cookieParser());
@@ -20,6 +18,7 @@ app.use(cors({
   origin: FRONTEND_URL,  // frontend origin
   credentials: true,                // allow cookies
 }));
+dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
 app.use(morgan('combined'));
 app.use(express.json());
