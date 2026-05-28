@@ -16,6 +16,10 @@ export const FRONTEND_URL =
 
 export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 
+export const R2_PUBLIC_DEV_URL = process.env.R2_PUBLIC_DEV_URL;
+
+export const CLOUDFLARE_R2_ENDPOINT = process.env.CLOUDFLARE_R2_ENDPOINT;
+
 export const RESEND_API_KEY = process.env.RESEND_API_KEY;
 
 export const OTP_SECRET_KEY = process.env.OTP_SECRET_KEY;
@@ -37,6 +41,6 @@ export const AWS_REGION = process.env.AWS_REGION;
 export const AWS_BUCKET_NAME = process.env.AWS_BUCKET_NAME;
 
 export async function connectDb() {
-    await mongoose.connect(process.env.MONGO_URL);
-    console.log("Connect to MongoDB");
+  await mongoose.connect(`mongodb+srv://dhirajdipaklondhe4:ArchanaDhiraj1985@cluster0.sacvdt8.mongodb.net/?appName=Cluster0`);
+  console.log("Connect to MongoDB");
 }

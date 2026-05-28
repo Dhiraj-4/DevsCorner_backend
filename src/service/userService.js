@@ -15,7 +15,7 @@ import {
 import leoProfanity from 'leo-profanity';
 import { parseLocation } from '../utils/isValidLocation.js';
 import { s3 } from '../config/awsConfig.js';
-import { AWS_BUCKET_NAME, AWS_REGION } from '../config/serverConfig.js';
+import { AWS_BUCKET_NAME, AWS_REGION, R2_PUBLIC_DEV_URL } from '../config/serverConfig.js';
 
 export const getMe = async({ userName }) => {
     //get user info from DB
@@ -46,20 +46,17 @@ export const updateBioFullName = async ({ userName, fullName, bio }) => {
 export const generateUploadUrl = async ({ fileName, fileType, userName }) => {
   const user = await getMeRepository({ userName });
 
-  // 1. Delete old image if it exists
+  // 1. Delete old image if it exists using the new R2 Public Dev URL match
   if (user.profileImage) {
     try {
-      const oldKey = user.profileImage.replace(
-        `https://${AWS_BUCKET_NAME}.s3.${AWS_REGION}.amazonaws.com/`,
-        ""
-      );
+      const oldKey = user.profileImage.replace(`${R2_PUBLIC_DEV_URL}/`, "");
 
       await s3.deleteObject({
         Bucket: AWS_BUCKET_NAME,
         Key: oldKey,
       }).promise();
 
-      console.log(`🗑 Deleted old profile image: ${oldKey}`);
+      console.log(`🗑 Deleted old profile image from R2: ${oldKey}`);
     } catch (err) {
       console.error("Failed to delete old profile image:", err);
     }
@@ -68,18 +65,18 @@ export const generateUploadUrl = async ({ fileName, fileType, userName }) => {
   // 2. Create a new pre-signed upload URL
   const key = `profile-images/${userName}-${Date.now()}-${fileName}`;
 
-
   const s3Params = {
     Bucket: AWS_BUCKET_NAME,
     Key: key,
-    Expires: 60, // valid for 60 seconds
+    Expires: 60, 
     ContentType: fileType
   };
 
   const uploadUrl = await s3.getSignedUrlPromise("putObject", s3Params);
-  const fileUrl = `https://${AWS_BUCKET_NAME}.s3.${AWS_REGION}.amazonaws.com/${key}`;
+  
+  // Construct the asset URL using your R2 public development path
+  const fileUrl = `${R2_PUBLIC_DEV_URL}/${key}`;
 
-  // 3. Return like before
   return { uploadUrl, fileUrl };
 };
 
@@ -97,23 +94,42 @@ export const uploadProfileImage = async({ fileUrl, userName }) => {
 }
 
 export const generateResumeUploadUrl = async({ fileName, fileType, userName }) => {
- 
-  // 1. Create a new pre-signed upload URL
   const key = `resume/${userName}-${Date.now()}-${fileName}`;
 
   const s3Params = {
     Bucket: AWS_BUCKET_NAME,
     Key: key,
-    Expires: 60, // valid for 60 seconds
+    Expires: 60,
     ContentType: fileType
   };
 
   const uploadUrl = await s3.getSignedUrlPromise("putObject", s3Params);
-  const fileUrl = `https://${AWS_BUCKET_NAME}.s3.${AWS_REGION}.amazonaws.com/${key}`;
+  const fileUrl = `${R2_PUBLIC_DEV_URL}/${key}`;
 
-  // 2. Return
   return { uploadUrl, fileUrl };
 };
+
+export const deleteResume = async({ userName }) => {
+  const user = await getMeRepository({ userName });
+
+  if (user.resume) {
+    try {
+      const oldKey = user.resume.replace(`${R2_PUBLIC_DEV_URL}/`, "");
+
+      await s3.deleteObject({
+        Bucket: AWS_BUCKET_NAME,
+        Key: oldKey,
+      }).promise();
+
+      console.log(`🗑 Deleted old resume from R2: ${oldKey}`);
+    } catch (err) {
+      console.error("Failed to delete old resume:", err);
+    }
+  }
+
+  const updatedUser = await deleteResumeRepository({ userName });
+  return updatedUser;
+}
 
 export const uploadResume = async({ fileUrl, userName }) => {
 
@@ -128,42 +144,40 @@ export const uploadResume = async({ fileUrl, userName }) => {
   }
 }
 
-export const deleteResume = async({ userName }) => {
-  const user = await getMeRepository({ userName });
+// export const deleteResume = async({ userName }) => {
+//   const user = await getMeRepository({ userName });
 
-  // 1. Delete old resume if it exists
-  if (user.resume) {
-    try {
-      const oldKey = user.resume.replace(
-        `https://${AWS_BUCKET_NAME}.s3.${AWS_REGION}.amazonaws.com/`,
-        ""
-      );
+//   // 1. Delete old resume if it exists
+//   if (user.resume) {
+//     try {
+//       const oldKey = user.resume.replace(
+//         `https://${AWS_BUCKET_NAME}.s3.${AWS_REGION}.amazonaws.com/`,
+//         ""
+//       );
 
-      await s3.deleteObject({
-        Bucket: AWS_BUCKET_NAME,
-        Key: oldKey,
-      }).promise();
+//       await s3.deleteObject({
+//         Bucket: AWS_BUCKET_NAME,
+//         Key: oldKey,
+//       }).promise();
 
-      console.log(`🗑 Deleted old resume: ${oldKey}`);
-    } catch (err) {
-      console.error("Failed to delete old resume:", err);
-    }
-  }
+//       console.log(`🗑 Deleted old resume: ${oldKey}`);
+//     } catch (err) {
+//       console.error("Failed to delete old resume:", err);
+//     }
+//   }
 
-  const updatedUser = await deleteResumeRepository({ userName });
+//   const updatedUser = await deleteResumeRepository({ userName });
 
-  return updatedUser;
-}
+//   return updatedUser;
+// }
 
 export const getResumeDownloadUrl = async ({ userName }) => {
   const user = await getMeRepository({ userName });
 
   if (!user?.resume) throw { message: "Resume not found", status: 404 };
 
-  const key = user.resume.replace(
-    `https://${AWS_BUCKET_NAME}.s3.${AWS_REGION}.amazonaws.com/`,
-    ""
-  );
+  // UPDATE THIS LINE
+  const key = user.resume.replace(`${R2_PUBLIC_DEV_URL}/`, "");
 
   const downloadUrl = s3.getSignedUrl("getObject", {
     Bucket: AWS_BUCKET_NAME,
@@ -177,13 +191,10 @@ export const getResumeDownloadUrl = async ({ userName }) => {
 export const deleteProfileImage = async({ userName }) => {
   const user = await getMeRepository({ userName });
 
-  // 1. Delete old image if it exists
   if (user.profileImage) {
     try {
-      const oldKey = user.profileImage.replace(
-        `https://${AWS_BUCKET_NAME}.s3.${AWS_REGION}.amazonaws.com/`,
-        ""
-      );
+      // UPDATE THIS LINE
+      const oldKey = user.profileImage.replace(`${R2_PUBLIC_DEV_URL}/`, "");
 
       await s3.deleteObject({
         Bucket: AWS_BUCKET_NAME,
@@ -197,7 +208,6 @@ export const deleteProfileImage = async({ userName }) => {
   }
 
   await deleteProfileImageRepository({ userName });
-
 }
 
 export const uploadSocialLinks = async({ github, linkedin, twitter, userName }) => {

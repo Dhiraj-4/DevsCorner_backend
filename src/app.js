@@ -40,9 +40,15 @@ export const io = new Server(server, {
 registerSocketHandlers(io);
 
 try {
-    server.listen(PORT, () => {
-    connectDb();
-    console.log(`Server is up on ${PORT}`);
+    server.listen(PORT, async () => {
+      try{
+        await connectDb();
+        // throw new Error("Database connection is disabled for testing purposes.");
+        console.log(`Server is up on ${PORT}`);
+      } catch (error) {
+        console.error("Failed to connect to the database:", error);
+        process.exit(1); // Exit the process with an error code
+      }
     });
 } catch (error) {
     console.log("Something went wrong!!");

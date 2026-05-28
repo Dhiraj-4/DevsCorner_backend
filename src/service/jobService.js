@@ -17,7 +17,7 @@ import {
     deleteBrandImage as deleteBrandImageRepository
 } from "../repository/jobRepository.js"
 import { parseLocation } from "../utils/isValidLocation.js";
-import { AWS_BUCKET_NAME, AWS_REGION } from "../config/serverConfig.js";
+import { AWS_BUCKET_NAME, AWS_REGION, R2_PUBLIC_DEV_URL } from "../config/serverConfig.js";
 import { s3 } from "../config/awsConfig.js";
 import { notify } from "../socket/socketHandlers.js";
 
@@ -128,16 +128,11 @@ export const udpateExperience = async({ userName, jobId, experience }) => {
 
 export const generateBrandImageUploadUrl = async ({ fileName, fileType, jobId, userName }) => {
   await isJobOwner({ userName, jobId });
-
   const job = await getJob({ jobId });
 
-  // 1. Delete old brand image if it exists
   if (job.brandImage) {
     try {
-      const oldKey = job.brandImage.replace(
-        `https://${AWS_BUCKET_NAME}.s3.${AWS_REGION}.amazonaws.com/`,
-        ""
-      );
+      const oldKey = job.brandImage.replace(`${R2_PUBLIC_DEV_URL}/`, "");
 
       await s3.deleteObject({
         Bucket: AWS_BUCKET_NAME,
@@ -150,20 +145,18 @@ export const generateBrandImageUploadUrl = async ({ fileName, fileType, jobId, u
     }
   }
 
-  // 2. Create a new pre-signed upload URL
   const key = `brand-images/${jobId}-${Date.now()}-${fileName}`;
 
   const s3Params = {
     Bucket: AWS_BUCKET_NAME,
     Key: key,
-    Expires: 60, // valid for 60 seconds
+    Expires: 60,
     ContentType: fileType
   };
 
   const uploadUrl = await s3.getSignedUrlPromise("putObject", s3Params);
-  const fileUrl = `https://${AWS_BUCKET_NAME}.s3.${AWS_REGION}.amazonaws.com/${key}`;
+  const fileUrl = `${R2_PUBLIC_DEV_URL}/${key}`;
 
-  // 3. Return pre-signed upload URL and file URL
   return { uploadUrl, fileUrl };
 };
 
@@ -188,10 +181,8 @@ export const deleteBrandImage = async({ jobId, userName }) => {
 
   if (oldJob.brandImage) {
     try {
-      const oldKey = oldJob.brandImage.replace(
-        `https://${AWS_BUCKET_NAME}.s3.${AWS_REGION}.amazonaws.com/`,
-        ""
-      );
+      // UPDATE THIS LINE
+      const oldKey = oldJob.brandImage.replace(`${R2_PUBLIC_DEV_URL}/`, "");
 
       await s3.deleteObject({
         Bucket: AWS_BUCKET_NAME,
