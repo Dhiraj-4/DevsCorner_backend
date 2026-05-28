@@ -41,6 +41,6 @@ export const AWS_REGION = process.env.AWS_REGION;
 export const AWS_BUCKET_NAME = process.env.AWS_BUCKET_NAME;
 
 export async function connectDb() {
-  await mongoose.connect(`mongodb+srv://dhirajdipaklondhe4:ArchanaDhiraj1985@cluster0.sacvdt8.mongodb.net/?appName=Cluster0`);
+  await mongoose.connect(process.env.MONGO_URL);
   console.log("Connect to MongoDB");
 }

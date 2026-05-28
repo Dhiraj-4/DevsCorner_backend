@@ -1,12 +1,15 @@
+import dns from 'dns';
+import { connectDb, FRONTEND_URL, PORT } from './config/serverConfig.js';
 import express from 'express';
 import morgan from 'morgan';
 import apiRouter from './routes/apiRoutes.js';
-import { connectDb, FRONTEND_URL, PORT } from './config/serverConfig.js';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { createServer } from "http";
 import { Server } from 'socket.io';
 import registerSocketHandlers from './socket/index.js';
+
+dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
 const app = express();
 
