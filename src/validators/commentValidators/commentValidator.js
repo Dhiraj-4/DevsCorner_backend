@@ -1,7 +1,9 @@
-export const locationValidator = (schema) => {
+export const commentValidator = (schema) => {
     return (req, res, next) => {
         const object = {
-            location: req.body?.location
+            commentId: req.body?.commentId,
+            text: req.body?.text,
+            postId: req.body?.postId
         }
         try {
             schema.parse(object);
@@ -11,7 +13,7 @@ export const locationValidator = (schema) => {
             try {
                 console.log("❌ Validation failed:", error);
             } catch (error) {
-                console.error("Error logging validation failure:", error.errors);
+                console.log("❌ Validation failed", error.errors);
             }
             res.status(400).json({
                 message: 'Validation failed',
@@ -19,5 +21,6 @@ export const locationValidator = (schema) => {
                 error: error
             });
         }
+
     }
 }

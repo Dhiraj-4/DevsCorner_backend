@@ -1,4 +1,4 @@
-import { getMe as getMeRepository } from "../repository/userRepository.js"
+import { getMe as getMeRepository } from "../repository/userRepository.js";
 import { v4 as uuidv4 } from "uuid";
 import leoProfanity from 'leo-profanity';
 import {

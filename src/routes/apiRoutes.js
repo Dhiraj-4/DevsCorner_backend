@@ -5,6 +5,7 @@ import jobRouter from './v1/jobRoutes.js';
 import postRouter from './v1/postRoutes.js';
 import chatRouter from './v1/chatRoutes.js';
 import notificationRouter from './v1/notificationRoutes.js';
+import commentRouter from './v1/commentRoutes.js';
 
 const router = express.Router();
 
@@ -19,5 +20,7 @@ router.use('/post', postRouter);
 router.use('/chat', chatRouter);
 
 router.use('/notification', notificationRouter);
+
+router.use('/comment', commentRouter);
 
 export default router;
